@@ -1,0 +1,516 @@
+<?xml version="1.0" encoding="Windows-1252"?>
+<VisualStudioProject
+	ProjectType="Visual C++"
+	Version="8,00"
+	Name="SensorManager_Updated"
+	ProjectGUID="{A45D94FB-6EAD-30EC-8856-BF863C6AC5D5}"
+	Keyword="Qt4VSv1.0">
+	<Platforms>
+		<Platform
+			Name="x64" />
+	</Platforms>
+	<Configurations>
+		<Configuration
+			Name="Release|x64"
+			OutputDirectory="release\"
+			ATLMinimizesCRunTimeLibraryUsage="false"
+			ConfigurationType="1"
+			IntermediateDirectory="release\"
+			UseOfMfc="0">
+			<Tool
+				Name="VCCLCompilerTool"
+				AdditionalIncludeDirectories=".,D:\QT\5.12.0\MSVC2017_64\include,D:\QT\5.12.0\MSVC2017_64\include\QtCharts,D:\QT\5.12.0\MSVC2017_64\include\QtWidgets,D:\QT\5.12.0\MSVC2017_64\include\QtGui,D:\QT\5.12.0\MSVC2017_64\include\QtANGLE,D:\QT\5.12.0\MSVC2017_64\include\QtNetwork,D:\QT\5.12.0\MSVC2017_64\include\QtSerialPort,D:\QT\5.12.0\MSVC2017_64\include\QtSql,D:\QT\5.12.0\MSVC2017_64\include\QtCore,release,.,\include,D:\QT\5.12.0\MSVC2017_64\mkspecs\win32-msvc"
+				AdditionalOptions="-w34100 -w34189 -w44996"
+				AssemblerListingLocation="release\"
+				DebugInformationFormat="0"
+				ExceptionHandling="1"
+				GeneratePreprocessedFile="0"
+				ObjectFile="release\"
+				Optimization ="2"
+				PreprocessorDefinitions="_WINDOWS,UNICODE,_UNICODE,WIN32,_ENABLE_EXTENDED_ALIGNED_STORAGE,WIN64,QT_DEPRECATED_WARNINGS,QT_NO_DEBUG,QT_CHARTS_LIB,QT_WIDGETS_LIB,QT_GUI_LIB,QT_NETWORK_LIB,QT_SERIALPORT_LIB,QT_SQL_LIB,QT_CORE_LIB,NDEBUG"
+				ProgramDataBaseFileName=""
+				RuntimeLibrary="2"
+				SuppressStartupBanner="true"
+				TreatWChar_tAsBuiltInType="true"
+				WarningLevel="3" />
+			<Tool
+				Name="VCLinkerTool"
+				AdditionalDependencies="$(QTDIR)\lib\Qt5Charts.lib $(QTDIR)\lib\Qt5Widgets.lib $(QTDIR)\lib\Qt5Gui.lib $(QTDIR)\lib\Qt5Network.lib $(QTDIR)\lib\Qt5SerialPort.lib $(QTDIR)\lib\Qt5Sql.lib $(QTDIR)\lib\Qt5Core.lib $(QTDIR)\lib\qtmain.lib"
+				AdditionalLibraryDirectories="$(QTDIR)\lib,D:\QT\5.12.0\MSVC2017_64\lib"
+				AdditionalOptions="&quot;/MANIFESTDEPENDENCY:type=&apos;win32&apos; name=&apos;Microsoft.Windows.Common-Controls&apos; version=&apos;6.0.0.0&apos; publicKeyToken=&apos;6595b64144ccf1df&apos; language=&apos;*&apos; processorArchitecture=&apos;*&apos;&quot;"
+				DataExecutionPrevention="true"
+				GenerateDebugInformation="false"
+				IgnoreImportLibrary="true"
+				LinkIncremental="1"
+				LinkTimeCodeGeneration="0"
+				OutputFile="$(OutDir)\SensorManager_Updated.exe"
+				ProgramDatabaseFile=""
+				RandomizedBaseAddress="true"
+				SubSystem="2"
+				SuppressStartupBanner="true" />
+			<Tool
+				Name="VCManifestTool" />
+			<Tool
+				Name="VCMIDLTool"
+				DefaultCharType="0"
+				EnableErrorChecks="1"
+				WarningLevel="0" />
+			<Tool
+				Name="VCPostBuildEventTool" />
+			<Tool
+				Name="VCPreBuildEventTool" />
+			<Tool
+				Name="VCPreLinkEventTool" />
+			<Tool
+				Name="VCResourceCompilerTool"
+				PreprocessorDefinitions="_WINDOWS,UNICODE,_UNICODE,WIN32,_ENABLE_EXTENDED_ALIGNED_STORAGE,WIN64,QT_DEPRECATED_WARNINGS,QT_NO_DEBUG,QT_CHARTS_LIB,QT_WIDGETS_LIB,QT_GUI_LIB,QT_NETWORK_LIB,QT_SERIALPORT_LIB,QT_SQL_LIB,QT_CORE_LIB" />
+			<DeploymentTool
+				RemoteDirectory="%CSIDL_PROGRAM_FILES%\SensorManager_Updated"
+				RegisterOutput="0"
+				AdditionalFiles="Qt5Charts.dll|D:\QT\5.12.0\MSVC2017_64\bin|%CSIDL_PROGRAM_FILES%\SensorManager_Updated|0;Qt5Widgets.dll|D:\QT\5.12.0\MSVC2017_64\bin|%CSIDL_PROGRAM_FILES%\SensorManager_Updated|0;Qt5Gui.dll|D:\QT\5.12.0\MSVC2017_64\bin|%CSIDL_PROGRAM_FILES%\SensorManager_Updated|0;Qt5Network.dll|D:\QT\5.12.0\MSVC2017_64\bin|%CSIDL_PROGRAM_FILES%\SensorManager_Updated|0;Qt5SerialPort.dll|D:\QT\5.12.0\MSVC2017_64\bin|%CSIDL_PROGRAM_FILES%\SensorManager_Updated|0;Qt5Sql.dll|D:\QT\5.12.0\MSVC2017_64\bin|%CSIDL_PROGRAM_FILES%\SensorManager_Updated|0;Qt5Core.dll|D:\QT\5.12.0\MSVC2017_64\bin|%CSIDL_PROGRAM_FILES%\SensorManager_Updated|0;" />
+		</Configuration>
+		<Configuration
+			Name="Debug|x64"
+			OutputDirectory="debug\"
+			ATLMinimizesCRunTimeLibraryUsage="false"
+			ConfigurationType="1"
+			IntermediateDirectory="debug\"
+			UseOfMfc="0">
+			<Tool
+				Name="VCCLCompilerTool"
+				AdditionalIncludeDirectories=".,D:\QT\5.12.0\MSVC2017_64\include,D:\QT\5.12.0\MSVC2017_64\include\QtCharts,D:\QT\5.12.0\MSVC2017_64\include\QtWidgets,D:\QT\5.12.0\MSVC2017_64\include\QtGui,D:\QT\5.12.0\MSVC2017_64\include\QtANGLE,D:\QT\5.12.0\MSVC2017_64\include\QtNetwork,D:\QT\5.12.0\MSVC2017_64\include\QtSerialPort,D:\QT\5.12.0\MSVC2017_64\include\QtSql,D:\QT\5.12.0\MSVC2017_64\include\QtCore,debug,.,\include,D:\QT\5.12.0\MSVC2017_64\mkspecs\win32-msvc"
+				AdditionalOptions="-w34100 -w34189 -w44996"
+				AssemblerListingLocation="debug\"
+				DebugInformationFormat="3"
+				ExceptionHandling="1"
+				GeneratePreprocessedFile="0"
+				ObjectFile="debug\"
+				Optimization ="4"
+				PreprocessorDefinitions="_WINDOWS,UNICODE,_UNICODE,WIN32,_ENABLE_EXTENDED_ALIGNED_STORAGE,WIN64,QT_DEPRECATED_WARNINGS,QT_CHARTS_LIB,QT_WIDGETS_LIB,QT_GUI_LIB,QT_NETWORK_LIB,QT_SERIALPORT_LIB,QT_SQL_LIB,QT_CORE_LIB"
+				ProgramDataBaseFileName=""
+				RuntimeLibrary="3"
+				SuppressStartupBanner="true"
+				TreatWChar_tAsBuiltInType="true"
+				WarningLevel="3" />
+			<Tool
+				Name="VCLinkerTool"
+				AdditionalDependencies="$(QTDIR)\lib\Qt5Chartsd.lib $(QTDIR)\lib\Qt5Widgetsd.lib $(QTDIR)\lib\Qt5Guid.lib $(QTDIR)\lib\Qt5Networkd.lib $(QTDIR)\lib\Qt5SerialPortd.lib $(QTDIR)\lib\Qt5Sqld.lib $(QTDIR)\lib\Qt5Cored.lib $(QTDIR)\lib\qtmaind.lib"
+				AdditionalLibraryDirectories="$(QTDIR)\lib,D:\QT\5.12.0\MSVC2017_64\lib"
+				AdditionalOptions="&quot;/MANIFESTDEPENDENCY:type=&apos;win32&apos; name=&apos;Microsoft.Windows.Common-Controls&apos; version=&apos;6.0.0.0&apos; publicKeyToken=&apos;6595b64144ccf1df&apos; language=&apos;*&apos; processorArchitecture=&apos;*&apos;&quot;"
+				DataExecutionPrevention="true"
+				GenerateDebugInformation="true"
+				IgnoreImportLibrary="true"
+				LinkTimeCodeGeneration="0"
+				OutputFile="$(OutDir)\SensorManager_Updated.exe"
+				ProgramDatabaseFile=""
+				RandomizedBaseAddress="true"
+				SubSystem="2"
+				SuppressStartupBanner="true" />
+			<Tool
+				Name="VCManifestTool" />
+			<Tool
+				Name="VCMIDLTool"
+				DefaultCharType="0"
+				EnableErrorChecks="1"
+				WarningLevel="0" />
+			<Tool
+				Name="VCPostBuildEventTool" />
+			<Tool
+				Name="VCPreBuildEventTool" />
+			<Tool
+				Name="VCPreLinkEventTool" />
+			<Tool
+				Name="VCResourceCompilerTool"
+				PreprocessorDefinitions="_WINDOWS,UNICODE,_UNICODE,WIN32,_ENABLE_EXTENDED_ALIGNED_STORAGE,WIN64,QT_DEPRECATED_WARNINGS,QT_CHARTS_LIB,QT_WIDGETS_LIB,QT_GUI_LIB,QT_NETWORK_LIB,QT_SERIALPORT_LIB,QT_SQL_LIB,QT_CORE_LIB,_DEBUG" />
+			<DeploymentTool
+				RemoteDirectory="%CSIDL_PROGRAM_FILES%\SensorManager_Updated"
+				RegisterOutput="0"
+				AdditionalFiles="Qt5Chartsd.dll|D:\QT\5.12.0\MSVC2017_64\bin|%CSIDL_PROGRAM_FILES%\SensorManager_Updated|0;Qt5Widgetsd.dll|D:\QT\5.12.0\MSVC2017_64\bin|%CSIDL_PROGRAM_FILES%\SensorManager_Updated|0;Qt5Guid.dll|D:\QT\5.12.0\MSVC2017_64\bin|%CSIDL_PROGRAM_FILES%\SensorManager_Updated|0;qwindowsd.dll|D:\QT\5.12.0\MSVC2017_64\plugins\platforms|%CSIDL_PROGRAM_FILES%\SensorManager_Updated\platforms|0;Qt5Networkd.dll|D:\QT\5.12.0\MSVC2017_64\bin|%CSIDL_PROGRAM_FILES%\SensorManager_Updated|0;Qt5SerialPortd.dll|D:\QT\5.12.0\MSVC2017_64\bin|%CSIDL_PROGRAM_FILES%\SensorManager_Updated|0;Qt5Sqld.dll|D:\QT\5.12.0\MSVC2017_64\bin|%CSIDL_PROGRAM_FILES%\SensorManager_Updated|0;Qt5Cored.dll|D:\QT\5.12.0\MSVC2017_64\bin|%CSIDL_PROGRAM_FILES%\SensorManager_Updated|0;" />
+		</Configuration>
+	</Configurations>
+	<Files>
+		<Filter
+			Name="Source Files"
+			Filter="cpp;c;cxx;def;odl;idl;hpj;bat;asm;asmx"
+			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}">
+			<File
+				RelativePath="dataconfigdialog.cpp" />
+			<File
+				RelativePath="datathread.cpp" />
+			<File
+				RelativePath="globeobject.cpp" />
+			<File
+				RelativePath="main.cpp" />
+			<File
+				RelativePath="mainwidget.cpp" />
+			<File
+				RelativePath="portdialog.cpp" />
+			<File
+				RelativePath="serialportdialog.cpp" />
+			<File
+				RelativePath="treeviewmodel.cpp" />
+		</Filter>
+		<Filter
+			Name="Header Files"
+			Filter="h;hpp;hxx;hm;inl;inc;xsd"
+			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}">
+			<File
+				RelativePath="dataconfigdialog.h">
+				<FileConfiguration
+					Name="Release|x64">
+					<Tool
+						Name="VCCustomBuildTool"
+						AdditionalDependencies="dataconfigdialog.h;release\moc_predefs.h;D:\QT\5.12.0\MSVC2017_64\bin\moc.exe"
+						CommandLine="D:\QT\5.12.0\MSVC2017_64\bin\moc.exe  -DUNICODE -D_UNICODE -DWIN32 -D_ENABLE_EXTENDED_ALIGNED_STORAGE -DWIN64 -DQT_DEPRECATED_WARNINGS -DQT_NO_DEBUG -DQT_CHARTS_LIB -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_NETWORK_LIB -DQT_SERIALPORT_LIB -DQT_SQL_LIB -DQT_CORE_LIB --compiler-flavor=msvc --include F:/Sensor/SensorManager_Updated/release/moc_predefs.h -ID:/QT/5.12.0/MSVC2017_64/mkspecs/win32-msvc -IF:/Sensor/SensorManager_Updated -ID:/QT/5.12.0/MSVC2017_64/include -ID:/QT/5.12.0/MSVC2017_64/include/QtCharts -ID:/QT/5.12.0/MSVC2017_64/include/QtWidgets -ID:/QT/5.12.0/MSVC2017_64/include/QtGui -ID:/QT/5.12.0/MSVC2017_64/include/QtANGLE -ID:/QT/5.12.0/MSVC2017_64/include/QtNetwork -ID:/QT/5.12.0/MSVC2017_64/include/QtSerialPort -ID:/QT/5.12.0/MSVC2017_64/include/QtSql -ID:/QT/5.12.0/MSVC2017_64/include/QtCore -I&quot;D:\Microsoft Visual Studio\VC98\atl\include&quot; -I&quot;D:\Microsoft Visual Studio\VC98\mfc\include&quot; -I&quot;D:\Microsoft Visual Studio\VC98\include&quot; -ID:\VS2017\VC\Tools\MSVC\14.16.27023\ATLMFC\include -ID:\VS2017\VC\Tools\MSVC\14.16.27023\include -I&quot;C:\Program Files (x86)\Windows Kits\NETFXSDK\4.6.1\include\um&quot; -I&quot;D:\Windows Kits\10\include\10.0.17134.0\ucrt&quot; -I&quot;D:\Windows Kits\10\include\10.0.17134.0\shared&quot; -I&quot;D:\Windows Kits\10\include\10.0.17134.0\um&quot; -I&quot;D:\Windows Kits\10\include\10.0.17134.0\winrt&quot; -I&quot;D:\Windows Kits\10\include\10.0.17134.0\cppwinrt&quot; dataconfigdialog.h -o release\moc_dataconfigdialog.cpp"
+						Description="MOC dataconfigdialog.h"
+						Outputs="release\moc_dataconfigdialog.cpp"
+						Path="D:\QT\5.12.0\MSVC2017_64\bin" />
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Debug|x64">
+					<Tool
+						Name="VCCustomBuildTool"
+						AdditionalDependencies="dataconfigdialog.h;debug\moc_predefs.h;D:\QT\5.12.0\MSVC2017_64\bin\moc.exe"
+						CommandLine="D:\QT\5.12.0\MSVC2017_64\bin\moc.exe  -DUNICODE -D_UNICODE -DWIN32 -D_ENABLE_EXTENDED_ALIGNED_STORAGE -DWIN64 -DQT_DEPRECATED_WARNINGS -DQT_CHARTS_LIB -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_NETWORK_LIB -DQT_SERIALPORT_LIB -DQT_SQL_LIB -DQT_CORE_LIB --compiler-flavor=msvc --include F:/Sensor/SensorManager_Updated/debug/moc_predefs.h -ID:/QT/5.12.0/MSVC2017_64/mkspecs/win32-msvc -IF:/Sensor/SensorManager_Updated -ID:/QT/5.12.0/MSVC2017_64/include -ID:/QT/5.12.0/MSVC2017_64/include/QtCharts -ID:/QT/5.12.0/MSVC2017_64/include/QtWidgets -ID:/QT/5.12.0/MSVC2017_64/include/QtGui -ID:/QT/5.12.0/MSVC2017_64/include/QtANGLE -ID:/QT/5.12.0/MSVC2017_64/include/QtNetwork -ID:/QT/5.12.0/MSVC2017_64/include/QtSerialPort -ID:/QT/5.12.0/MSVC2017_64/include/QtSql -ID:/QT/5.12.0/MSVC2017_64/include/QtCore -I&quot;D:\Microsoft Visual Studio\VC98\atl\include&quot; -I&quot;D:\Microsoft Visual Studio\VC98\mfc\include&quot; -I&quot;D:\Microsoft Visual Studio\VC98\include&quot; -ID:\VS2017\VC\Tools\MSVC\14.16.27023\ATLMFC\include -ID:\VS2017\VC\Tools\MSVC\14.16.27023\include -I&quot;C:\Program Files (x86)\Windows Kits\NETFXSDK\4.6.1\include\um&quot; -I&quot;D:\Windows Kits\10\include\10.0.17134.0\ucrt&quot; -I&quot;D:\Windows Kits\10\include\10.0.17134.0\shared&quot; -I&quot;D:\Windows Kits\10\include\10.0.17134.0\um&quot; -I&quot;D:\Windows Kits\10\include\10.0.17134.0\winrt&quot; -I&quot;D:\Windows Kits\10\include\10.0.17134.0\cppwinrt&quot; dataconfigdialog.h -o debug\moc_dataconfigdialog.cpp"
+						Description="MOC dataconfigdialog.h"
+						Outputs="debug\moc_dataconfigdialog.cpp"
+						Path="D:\QT\5.12.0\MSVC2017_64\bin" />
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="datathread.h">
+				<FileConfiguration
+					Name="Release|x64">
+					<Tool
+						Name="VCCustomBuildTool"
+						AdditionalDependencies="datathread.h;release\moc_predefs.h;D:\QT\5.12.0\MSVC2017_64\bin\moc.exe"
+						CommandLine="D:\QT\5.12.0\MSVC2017_64\bin\moc.exe  -DUNICODE -D_UNICODE -DWIN32 -D_ENABLE_EXTENDED_ALIGNED_STORAGE -DWIN64 -DQT_DEPRECATED_WARNINGS -DQT_NO_DEBUG -DQT_CHARTS_LIB -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_NETWORK_LIB -DQT_SERIALPORT_LIB -DQT_SQL_LIB -DQT_CORE_LIB --compiler-flavor=msvc --include F:/Sensor/SensorManager_Updated/release/moc_predefs.h -ID:/QT/5.12.0/MSVC2017_64/mkspecs/win32-msvc -IF:/Sensor/SensorManager_Updated -ID:/QT/5.12.0/MSVC2017_64/include -ID:/QT/5.12.0/MSVC2017_64/include/QtCharts -ID:/QT/5.12.0/MSVC2017_64/include/QtWidgets -ID:/QT/5.12.0/MSVC2017_64/include/QtGui -ID:/QT/5.12.0/MSVC2017_64/include/QtANGLE -ID:/QT/5.12.0/MSVC2017_64/include/QtNetwork -ID:/QT/5.12.0/MSVC2017_64/include/QtSerialPort -ID:/QT/5.12.0/MSVC2017_64/include/QtSql -ID:/QT/5.12.0/MSVC2017_64/include/QtCore -I&quot;D:\Microsoft Visual Studio\VC98\atl\include&quot; -I&quot;D:\Microsoft Visual Studio\VC98\mfc\include&quot; -I&quot;D:\Microsoft Visual Studio\VC98\include&quot; -ID:\VS2017\VC\Tools\MSVC\14.16.27023\ATLMFC\include -ID:\VS2017\VC\Tools\MSVC\14.16.27023\include -I&quot;C:\Program Files (x86)\Windows Kits\NETFXSDK\4.6.1\include\um&quot; -I&quot;D:\Windows Kits\10\include\10.0.17134.0\ucrt&quot; -I&quot;D:\Windows Kits\10\include\10.0.17134.0\shared&quot; -I&quot;D:\Windows Kits\10\include\10.0.17134.0\um&quot; -I&quot;D:\Windows Kits\10\include\10.0.17134.0\winrt&quot; -I&quot;D:\Windows Kits\10\include\10.0.17134.0\cppwinrt&quot; datathread.h -o release\moc_datathread.cpp"
+						Description="MOC datathread.h"
+						Outputs="release\moc_datathread.cpp"
+						Path="D:\QT\5.12.0\MSVC2017_64\bin" />
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Debug|x64">
+					<Tool
+						Name="VCCustomBuildTool"
+						AdditionalDependencies="datathread.h;debug\moc_predefs.h;D:\QT\5.12.0\MSVC2017_64\bin\moc.exe"
+						CommandLine="D:\QT\5.12.0\MSVC2017_64\bin\moc.exe  -DUNICODE -D_UNICODE -DWIN32 -D_ENABLE_EXTENDED_ALIGNED_STORAGE -DWIN64 -DQT_DEPRECATED_WARNINGS -DQT_CHARTS_LIB -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_NETWORK_LIB -DQT_SERIALPORT_LIB -DQT_SQL_LIB -DQT_CORE_LIB --compiler-flavor=msvc --include F:/Sensor/SensorManager_Updated/debug/moc_predefs.h -ID:/QT/5.12.0/MSVC2017_64/mkspecs/win32-msvc -IF:/Sensor/SensorManager_Updated -ID:/QT/5.12.0/MSVC2017_64/include -ID:/QT/5.12.0/MSVC2017_64/include/QtCharts -ID:/QT/5.12.0/MSVC2017_64/include/QtWidgets -ID:/QT/5.12.0/MSVC2017_64/include/QtGui -ID:/QT/5.12.0/MSVC2017_64/include/QtANGLE -ID:/QT/5.12.0/MSVC2017_64/include/QtNetwork -ID:/QT/5.12.0/MSVC2017_64/include/QtSerialPort -ID:/QT/5.12.0/MSVC2017_64/include/QtSql -ID:/QT/5.12.0/MSVC2017_64/include/QtCore -I&quot;D:\Microsoft Visual Studio\VC98\atl\include&quot; -I&quot;D:\Microsoft Visual Studio\VC98\mfc\include&quot; -I&quot;D:\Microsoft Visual Studio\VC98\include&quot; -ID:\VS2017\VC\Tools\MSVC\14.16.27023\ATLMFC\include -ID:\VS2017\VC\Tools\MSVC\14.16.27023\include -I&quot;C:\Program Files (x86)\Windows Kits\NETFXSDK\4.6.1\include\um&quot; -I&quot;D:\Windows Kits\10\include\10.0.17134.0\ucrt&quot; -I&quot;D:\Windows Kits\10\include\10.0.17134.0\shared&quot; -I&quot;D:\Windows Kits\10\include\10.0.17134.0\um&quot; -I&quot;D:\Windows Kits\10\include\10.0.17134.0\winrt&quot; -I&quot;D:\Windows Kits\10\include\10.0.17134.0\cppwinrt&quot; datathread.h -o debug\moc_datathread.cpp"
+						Description="MOC datathread.h"
+						Outputs="debug\moc_datathread.cpp"
+						Path="D:\QT\5.12.0\MSVC2017_64\bin" />
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="globeobject.h" />
+			<File
+				RelativePath="mainwidget.h">
+				<FileConfiguration
+					Name="Release|x64">
+					<Tool
+						Name="VCCustomBuildTool"
+						AdditionalDependencies="mainwidget.h;release\moc_predefs.h;D:\QT\5.12.0\MSVC2017_64\bin\moc.exe"
+						CommandLine="D:\QT\5.12.0\MSVC2017_64\bin\moc.exe  -DUNICODE -D_UNICODE -DWIN32 -D_ENABLE_EXTENDED_ALIGNED_STORAGE -DWIN64 -DQT_DEPRECATED_WARNINGS -DQT_NO_DEBUG -DQT_CHARTS_LIB -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_NETWORK_LIB -DQT_SERIALPORT_LIB -DQT_SQL_LIB -DQT_CORE_LIB --compiler-flavor=msvc --include F:/Sensor/SensorManager_Updated/release/moc_predefs.h -ID:/QT/5.12.0/MSVC2017_64/mkspecs/win32-msvc -IF:/Sensor/SensorManager_Updated -ID:/QT/5.12.0/MSVC2017_64/include -ID:/QT/5.12.0/MSVC2017_64/include/QtCharts -ID:/QT/5.12.0/MSVC2017_64/include/QtWidgets -ID:/QT/5.12.0/MSVC2017_64/include/QtGui -ID:/QT/5.12.0/MSVC2017_64/include/QtANGLE -ID:/QT/5.12.0/MSVC2017_64/include/QtNetwork -ID:/QT/5.12.0/MSVC2017_64/include/QtSerialPort -ID:/QT/5.12.0/MSVC2017_64/include/QtSql -ID:/QT/5.12.0/MSVC2017_64/include/QtCore -I&quot;D:\Microsoft Visual Studio\VC98\atl\include&quot; -I&quot;D:\Microsoft Visual Studio\VC98\mfc\include&quot; -I&quot;D:\Microsoft Visual Studio\VC98\include&quot; -ID:\VS2017\VC\Tools\MSVC\14.16.27023\ATLMFC\include -ID:\VS2017\VC\Tools\MSVC\14.16.27023\include -I&quot;C:\Program Files (x86)\Windows Kits\NETFXSDK\4.6.1\include\um&quot; -I&quot;D:\Windows Kits\10\include\10.0.17134.0\ucrt&quot; -I&quot;D:\Windows Kits\10\include\10.0.17134.0\shared&quot; -I&quot;D:\Windows Kits\10\include\10.0.17134.0\um&quot; -I&quot;D:\Windows Kits\10\include\10.0.17134.0\winrt&quot; -I&quot;D:\Windows Kits\10\include\10.0.17134.0\cppwinrt&quot; mainwidget.h -o release\moc_mainwidget.cpp"
+						Description="MOC mainwidget.h"
+						Outputs="release\moc_mainwidget.cpp"
+						Path="D:\QT\5.12.0\MSVC2017_64\bin" />
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Debug|x64">
+					<Tool
+						Name="VCCustomBuildTool"
+						AdditionalDependencies="mainwidget.h;debug\moc_predefs.h;D:\QT\5.12.0\MSVC2017_64\bin\moc.exe"
+						CommandLine="D:\QT\5.12.0\MSVC2017_64\bin\moc.exe  -DUNICODE -D_UNICODE -DWIN32 -D_ENABLE_EXTENDED_ALIGNED_STORAGE -DWIN64 -DQT_DEPRECATED_WARNINGS -DQT_CHARTS_LIB -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_NETWORK_LIB -DQT_SERIALPORT_LIB -DQT_SQL_LIB -DQT_CORE_LIB --compiler-flavor=msvc --include F:/Sensor/SensorManager_Updated/debug/moc_predefs.h -ID:/QT/5.12.0/MSVC2017_64/mkspecs/win32-msvc -IF:/Sensor/SensorManager_Updated -ID:/QT/5.12.0/MSVC2017_64/include -ID:/QT/5.12.0/MSVC2017_64/include/QtCharts -ID:/QT/5.12.0/MSVC2017_64/include/QtWidgets -ID:/QT/5.12.0/MSVC2017_64/include/QtGui -ID:/QT/5.12.0/MSVC2017_64/include/QtANGLE -ID:/QT/5.12.0/MSVC2017_64/include/QtNetwork -ID:/QT/5.12.0/MSVC2017_64/include/QtSerialPort -ID:/QT/5.12.0/MSVC2017_64/include/QtSql -ID:/QT/5.12.0/MSVC2017_64/include/QtCore -I&quot;D:\Microsoft Visual Studio\VC98\atl\include&quot; -I&quot;D:\Microsoft Visual Studio\VC98\mfc\include&quot; -I&quot;D:\Microsoft Visual Studio\VC98\include&quot; -ID:\VS2017\VC\Tools\MSVC\14.16.27023\ATLMFC\include -ID:\VS2017\VC\Tools\MSVC\14.16.27023\include -I&quot;C:\Program Files (x86)\Windows Kits\NETFXSDK\4.6.1\include\um&quot; -I&quot;D:\Windows Kits\10\include\10.0.17134.0\ucrt&quot; -I&quot;D:\Windows Kits\10\include\10.0.17134.0\shared&quot; -I&quot;D:\Windows Kits\10\include\10.0.17134.0\um&quot; -I&quot;D:\Windows Kits\10\include\10.0.17134.0\winrt&quot; -I&quot;D:\Windows Kits\10\include\10.0.17134.0\cppwinrt&quot; mainwidget.h -o debug\moc_mainwidget.cpp"
+						Description="MOC mainwidget.h"
+						Outputs="debug\moc_mainwidget.cpp"
+						Path="D:\QT\5.12.0\MSVC2017_64\bin" />
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="portdialog.h">
+				<FileConfiguration
+					Name="Release|x64">
+					<Tool
+						Name="VCCustomBuildTool"
+						AdditionalDependencies="portdialog.h;release\moc_predefs.h;D:\QT\5.12.0\MSVC2017_64\bin\moc.exe"
+						CommandLine="D:\QT\5.12.0\MSVC2017_64\bin\moc.exe  -DUNICODE -D_UNICODE -DWIN32 -D_ENABLE_EXTENDED_ALIGNED_STORAGE -DWIN64 -DQT_DEPRECATED_WARNINGS -DQT_NO_DEBUG -DQT_CHARTS_LIB -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_NETWORK_LIB -DQT_SERIALPORT_LIB -DQT_SQL_LIB -DQT_CORE_LIB --compiler-flavor=msvc --include F:/Sensor/SensorManager_Updated/release/moc_predefs.h -ID:/QT/5.12.0/MSVC2017_64/mkspecs/win32-msvc -IF:/Sensor/SensorManager_Updated -ID:/QT/5.12.0/MSVC2017_64/include -ID:/QT/5.12.0/MSVC2017_64/include/QtCharts -ID:/QT/5.12.0/MSVC2017_64/include/QtWidgets -ID:/QT/5.12.0/MSVC2017_64/include/QtGui -ID:/QT/5.12.0/MSVC2017_64/include/QtANGLE -ID:/QT/5.12.0/MSVC2017_64/include/QtNetwork -ID:/QT/5.12.0/MSVC2017_64/include/QtSerialPort -ID:/QT/5.12.0/MSVC2017_64/include/QtSql -ID:/QT/5.12.0/MSVC2017_64/include/QtCore -I&quot;D:\Microsoft Visual Studio\VC98\atl\include&quot; -I&quot;D:\Microsoft Visual Studio\VC98\mfc\include&quot; -I&quot;D:\Microsoft Visual Studio\VC98\include&quot; -ID:\VS2017\VC\Tools\MSVC\14.16.27023\ATLMFC\include -ID:\VS2017\VC\Tools\MSVC\14.16.27023\include -I&quot;C:\Program Files (x86)\Windows Kits\NETFXSDK\4.6.1\include\um&quot; -I&quot;D:\Windows Kits\10\include\10.0.17134.0\ucrt&quot; -I&quot;D:\Windows Kits\10\include\10.0.17134.0\shared&quot; -I&quot;D:\Windows Kits\10\include\10.0.17134.0\um&quot; -I&quot;D:\Windows Kits\10\include\10.0.17134.0\winrt&quot; -I&quot;D:\Windows Kits\10\include\10.0.17134.0\cppwinrt&quot; portdialog.h -o release\moc_portdialog.cpp"
+						Description="MOC portdialog.h"
+						Outputs="release\moc_portdialog.cpp"
+						Path="D:\QT\5.12.0\MSVC2017_64\bin" />
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Debug|x64">
+					<Tool
+						Name="VCCustomBuildTool"
+						AdditionalDependencies="portdialog.h;debug\moc_predefs.h;D:\QT\5.12.0\MSVC2017_64\bin\moc.exe"
+						CommandLine="D:\QT\5.12.0\MSVC2017_64\bin\moc.exe  -DUNICODE -D_UNICODE -DWIN32 -D_ENABLE_EXTENDED_ALIGNED_STORAGE -DWIN64 -DQT_DEPRECATED_WARNINGS -DQT_CHARTS_LIB -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_NETWORK_LIB -DQT_SERIALPORT_LIB -DQT_SQL_LIB -DQT_CORE_LIB --compiler-flavor=msvc --include F:/Sensor/SensorManager_Updated/debug/moc_predefs.h -ID:/QT/5.12.0/MSVC2017_64/mkspecs/win32-msvc -IF:/Sensor/SensorManager_Updated -ID:/QT/5.12.0/MSVC2017_64/include -ID:/QT/5.12.0/MSVC2017_64/include/QtCharts -ID:/QT/5.12.0/MSVC2017_64/include/QtWidgets -ID:/QT/5.12.0/MSVC2017_64/include/QtGui -ID:/QT/5.12.0/MSVC2017_64/include/QtANGLE -ID:/QT/5.12.0/MSVC2017_64/include/QtNetwork -ID:/QT/5.12.0/MSVC2017_64/include/QtSerialPort -ID:/QT/5.12.0/MSVC2017_64/include/QtSql -ID:/QT/5.12.0/MSVC2017_64/include/QtCore -I&quot;D:\Microsoft Visual Studio\VC98\atl\include&quot; -I&quot;D:\Microsoft Visual Studio\VC98\mfc\include&quot; -I&quot;D:\Microsoft Visual Studio\VC98\include&quot; -ID:\VS2017\VC\Tools\MSVC\14.16.27023\ATLMFC\include -ID:\VS2017\VC\Tools\MSVC\14.16.27023\include -I&quot;C:\Program Files (x86)\Windows Kits\NETFXSDK\4.6.1\include\um&quot; -I&quot;D:\Windows Kits\10\include\10.0.17134.0\ucrt&quot; -I&quot;D:\Windows Kits\10\include\10.0.17134.0\shared&quot; -I&quot;D:\Windows Kits\10\include\10.0.17134.0\um&quot; -I&quot;D:\Windows Kits\10\include\10.0.17134.0\winrt&quot; -I&quot;D:\Windows Kits\10\include\10.0.17134.0\cppwinrt&quot; portdialog.h -o debug\moc_portdialog.cpp"
+						Description="MOC portdialog.h"
+						Outputs="debug\moc_portdialog.cpp"
+						Path="D:\QT\5.12.0\MSVC2017_64\bin" />
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="serialportdialog.h">
+				<FileConfiguration
+					Name="Release|x64">
+					<Tool
+						Name="VCCustomBuildTool"
+						AdditionalDependencies="serialportdialog.h;release\moc_predefs.h;D:\QT\5.12.0\MSVC2017_64\bin\moc.exe"
+						CommandLine="D:\QT\5.12.0\MSVC2017_64\bin\moc.exe  -DUNICODE -D_UNICODE -DWIN32 -D_ENABLE_EXTENDED_ALIGNED_STORAGE -DWIN64 -DQT_DEPRECATED_WARNINGS -DQT_NO_DEBUG -DQT_CHARTS_LIB -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_NETWORK_LIB -DQT_SERIALPORT_LIB -DQT_SQL_LIB -DQT_CORE_LIB --compiler-flavor=msvc --include F:/Sensor/SensorManager_Updated/release/moc_predefs.h -ID:/QT/5.12.0/MSVC2017_64/mkspecs/win32-msvc -IF:/Sensor/SensorManager_Updated -ID:/QT/5.12.0/MSVC2017_64/include -ID:/QT/5.12.0/MSVC2017_64/include/QtCharts -ID:/QT/5.12.0/MSVC2017_64/include/QtWidgets -ID:/QT/5.12.0/MSVC2017_64/include/QtGui -ID:/QT/5.12.0/MSVC2017_64/include/QtANGLE -ID:/QT/5.12.0/MSVC2017_64/include/QtNetwork -ID:/QT/5.12.0/MSVC2017_64/include/QtSerialPort -ID:/QT/5.12.0/MSVC2017_64/include/QtSql -ID:/QT/5.12.0/MSVC2017_64/include/QtCore -I&quot;D:\Microsoft Visual Studio\VC98\atl\include&quot; -I&quot;D:\Microsoft Visual Studio\VC98\mfc\include&quot; -I&quot;D:\Microsoft Visual Studio\VC98\include&quot; -ID:\VS2017\VC\Tools\MSVC\14.16.27023\ATLMFC\include -ID:\VS2017\VC\Tools\MSVC\14.16.27023\include -I&quot;C:\Program Files (x86)\Windows Kits\NETFXSDK\4.6.1\include\um&quot; -I&quot;D:\Windows Kits\10\include\10.0.17134.0\ucrt&quot; -I&quot;D:\Windows Kits\10\include\10.0.17134.0\shared&quot; -I&quot;D:\Windows Kits\10\include\10.0.17134.0\um&quot; -I&quot;D:\Windows Kits\10\include\10.0.17134.0\winrt&quot; -I&quot;D:\Windows Kits\10\include\10.0.17134.0\cppwinrt&quot; serialportdialog.h -o release\moc_serialportdialog.cpp"
+						Description="MOC serialportdialog.h"
+						Outputs="release\moc_serialportdialog.cpp"
+						Path="D:\QT\5.12.0\MSVC2017_64\bin" />
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Debug|x64">
+					<Tool
+						Name="VCCustomBuildTool"
+						AdditionalDependencies="serialportdialog.h;debug\moc_predefs.h;D:\QT\5.12.0\MSVC2017_64\bin\moc.exe"
+						CommandLine="D:\QT\5.12.0\MSVC2017_64\bin\moc.exe  -DUNICODE -D_UNICODE -DWIN32 -D_ENABLE_EXTENDED_ALIGNED_STORAGE -DWIN64 -DQT_DEPRECATED_WARNINGS -DQT_CHARTS_LIB -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_NETWORK_LIB -DQT_SERIALPORT_LIB -DQT_SQL_LIB -DQT_CORE_LIB --compiler-flavor=msvc --include F:/Sensor/SensorManager_Updated/debug/moc_predefs.h -ID:/QT/5.12.0/MSVC2017_64/mkspecs/win32-msvc -IF:/Sensor/SensorManager_Updated -ID:/QT/5.12.0/MSVC2017_64/include -ID:/QT/5.12.0/MSVC2017_64/include/QtCharts -ID:/QT/5.12.0/MSVC2017_64/include/QtWidgets -ID:/QT/5.12.0/MSVC2017_64/include/QtGui -ID:/QT/5.12.0/MSVC2017_64/include/QtANGLE -ID:/QT/5.12.0/MSVC2017_64/include/QtNetwork -ID:/QT/5.12.0/MSVC2017_64/include/QtSerialPort -ID:/QT/5.12.0/MSVC2017_64/include/QtSql -ID:/QT/5.12.0/MSVC2017_64/include/QtCore -I&quot;D:\Microsoft Visual Studio\VC98\atl\include&quot; -I&quot;D:\Microsoft Visual Studio\VC98\mfc\include&quot; -I&quot;D:\Microsoft Visual Studio\VC98\include&quot; -ID:\VS2017\VC\Tools\MSVC\14.16.27023\ATLMFC\include -ID:\VS2017\VC\Tools\MSVC\14.16.27023\include -I&quot;C:\Program Files (x86)\Windows Kits\NETFXSDK\4.6.1\include\um&quot; -I&quot;D:\Windows Kits\10\include\10.0.17134.0\ucrt&quot; -I&quot;D:\Windows Kits\10\include\10.0.17134.0\shared&quot; -I&quot;D:\Windows Kits\10\include\10.0.17134.0\um&quot; -I&quot;D:\Windows Kits\10\include\10.0.17134.0\winrt&quot; -I&quot;D:\Windows Kits\10\include\10.0.17134.0\cppwinrt&quot; serialportdialog.h -o debug\moc_serialportdialog.cpp"
+						Description="MOC serialportdialog.h"
+						Outputs="debug\moc_serialportdialog.cpp"
+						Path="D:\QT\5.12.0\MSVC2017_64\bin" />
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="treeviewmodel.h">
+				<FileConfiguration
+					Name="Release|x64">
+					<Tool
+						Name="VCCustomBuildTool"
+						AdditionalDependencies="treeviewmodel.h;release\moc_predefs.h;D:\QT\5.12.0\MSVC2017_64\bin\moc.exe"
+						CommandLine="D:\QT\5.12.0\MSVC2017_64\bin\moc.exe  -DUNICODE -D_UNICODE -DWIN32 -D_ENABLE_EXTENDED_ALIGNED_STORAGE -DWIN64 -DQT_DEPRECATED_WARNINGS -DQT_NO_DEBUG -DQT_CHARTS_LIB -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_NETWORK_LIB -DQT_SERIALPORT_LIB -DQT_SQL_LIB -DQT_CORE_LIB --compiler-flavor=msvc --include F:/Sensor/SensorManager_Updated/release/moc_predefs.h -ID:/QT/5.12.0/MSVC2017_64/mkspecs/win32-msvc -IF:/Sensor/SensorManager_Updated -ID:/QT/5.12.0/MSVC2017_64/include -ID:/QT/5.12.0/MSVC2017_64/include/QtCharts -ID:/QT/5.12.0/MSVC2017_64/include/QtWidgets -ID:/QT/5.12.0/MSVC2017_64/include/QtGui -ID:/QT/5.12.0/MSVC2017_64/include/QtANGLE -ID:/QT/5.12.0/MSVC2017_64/include/QtNetwork -ID:/QT/5.12.0/MSVC2017_64/include/QtSerialPort -ID:/QT/5.12.0/MSVC2017_64/include/QtSql -ID:/QT/5.12.0/MSVC2017_64/include/QtCore -I&quot;D:\Microsoft Visual Studio\VC98\atl\include&quot; -I&quot;D:\Microsoft Visual Studio\VC98\mfc\include&quot; -I&quot;D:\Microsoft Visual Studio\VC98\include&quot; -ID:\VS2017\VC\Tools\MSVC\14.16.27023\ATLMFC\include -ID:\VS2017\VC\Tools\MSVC\14.16.27023\include -I&quot;C:\Program Files (x86)\Windows Kits\NETFXSDK\4.6.1\include\um&quot; -I&quot;D:\Windows Kits\10\include\10.0.17134.0\ucrt&quot; -I&quot;D:\Windows Kits\10\include\10.0.17134.0\shared&quot; -I&quot;D:\Windows Kits\10\include\10.0.17134.0\um&quot; -I&quot;D:\Windows Kits\10\include\10.0.17134.0\winrt&quot; -I&quot;D:\Windows Kits\10\include\10.0.17134.0\cppwinrt&quot; treeviewmodel.h -o release\moc_treeviewmodel.cpp"
+						Description="MOC treeviewmodel.h"
+						Outputs="release\moc_treeviewmodel.cpp"
+						Path="D:\QT\5.12.0\MSVC2017_64\bin" />
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Debug|x64">
+					<Tool
+						Name="VCCustomBuildTool"
+						AdditionalDependencies="treeviewmodel.h;debug\moc_predefs.h;D:\QT\5.12.0\MSVC2017_64\bin\moc.exe"
+						CommandLine="D:\QT\5.12.0\MSVC2017_64\bin\moc.exe  -DUNICODE -D_UNICODE -DWIN32 -D_ENABLE_EXTENDED_ALIGNED_STORAGE -DWIN64 -DQT_DEPRECATED_WARNINGS -DQT_CHARTS_LIB -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_NETWORK_LIB -DQT_SERIALPORT_LIB -DQT_SQL_LIB -DQT_CORE_LIB --compiler-flavor=msvc --include F:/Sensor/SensorManager_Updated/debug/moc_predefs.h -ID:/QT/5.12.0/MSVC2017_64/mkspecs/win32-msvc -IF:/Sensor/SensorManager_Updated -ID:/QT/5.12.0/MSVC2017_64/include -ID:/QT/5.12.0/MSVC2017_64/include/QtCharts -ID:/QT/5.12.0/MSVC2017_64/include/QtWidgets -ID:/QT/5.12.0/MSVC2017_64/include/QtGui -ID:/QT/5.12.0/MSVC2017_64/include/QtANGLE -ID:/QT/5.12.0/MSVC2017_64/include/QtNetwork -ID:/QT/5.12.0/MSVC2017_64/include/QtSerialPort -ID:/QT/5.12.0/MSVC2017_64/include/QtSql -ID:/QT/5.12.0/MSVC2017_64/include/QtCore -I&quot;D:\Microsoft Visual Studio\VC98\atl\include&quot; -I&quot;D:\Microsoft Visual Studio\VC98\mfc\include&quot; -I&quot;D:\Microsoft Visual Studio\VC98\include&quot; -ID:\VS2017\VC\Tools\MSVC\14.16.27023\ATLMFC\include -ID:\VS2017\VC\Tools\MSVC\14.16.27023\include -I&quot;C:\Program Files (x86)\Windows Kits\NETFXSDK\4.6.1\include\um&quot; -I&quot;D:\Windows Kits\10\include\10.0.17134.0\ucrt&quot; -I&quot;D:\Windows Kits\10\include\10.0.17134.0\shared&quot; -I&quot;D:\Windows Kits\10\include\10.0.17134.0\um&quot; -I&quot;D:\Windows Kits\10\include\10.0.17134.0\winrt&quot; -I&quot;D:\Windows Kits\10\include\10.0.17134.0\cppwinrt&quot; treeviewmodel.h -o debug\moc_treeviewmodel.cpp"
+						Description="MOC treeviewmodel.h"
+						Outputs="debug\moc_treeviewmodel.cpp"
+						Path="D:\QT\5.12.0\MSVC2017_64\bin" />
+				</FileConfiguration>
+			</File>
+		</Filter>
+		<Filter
+			Name="Generated Files"
+			Filter="cpp;c;cxx;moc;h;def;odl;idl;res;"
+			UniqueIdentifier="{71ED8ED8-ACB9-4CE9-BBE1-E00B30144E11}">
+			<File
+				RelativePath="debug\moc_dataconfigdialog.cpp">
+				<FileConfiguration
+					Name="Release|x64"
+					ExcludedFromBuild="true" />
+			</File>
+			<File
+				RelativePath="release\moc_dataconfigdialog.cpp">
+				<FileConfiguration
+					Name="Debug|x64"
+					ExcludedFromBuild="true" />
+			</File>
+			<File
+				RelativePath="debug\moc_datathread.cpp">
+				<FileConfiguration
+					Name="Release|x64"
+					ExcludedFromBuild="true" />
+			</File>
+			<File
+				RelativePath="release\moc_datathread.cpp">
+				<FileConfiguration
+					Name="Debug|x64"
+					ExcludedFromBuild="true" />
+			</File>
+			<File
+				RelativePath="debug\moc_mainwidget.cpp">
+				<FileConfiguration
+					Name="Release|x64"
+					ExcludedFromBuild="true" />
+			</File>
+			<File
+				RelativePath="release\moc_mainwidget.cpp">
+				<FileConfiguration
+					Name="Debug|x64"
+					ExcludedFromBuild="true" />
+			</File>
+			<File
+				RelativePath="debug\moc_portdialog.cpp">
+				<FileConfiguration
+					Name="Release|x64"
+					ExcludedFromBuild="true" />
+			</File>
+			<File
+				RelativePath="release\moc_portdialog.cpp">
+				<FileConfiguration
+					Name="Debug|x64"
+					ExcludedFromBuild="true" />
+			</File>
+			<File
+				RelativePath="debug\moc_predefs.h.cbt">
+				<FileConfiguration
+					Name="Release|x64"
+					ExcludedFromBuild="true" />
+				<FileConfiguration
+					Name="Debug|x64">
+					<Tool
+						Name="VCCustomBuildTool"
+						AdditionalDependencies="D:\QT\5.12.0\MSVC2017_64\mkspecs\features\data\dummy.cpp"
+						CommandLine="cl -Bx&quot;$(QTDIR)\bin\qmake.exe&quot; -nologo -Zc:wchar_t -Zi -MDd -W3 -w34100 -w34189 -w44996 -E D:\QT\5.12.0\MSVC2017_64\mkspecs\features\data\dummy.cpp 2>NUL >debug\moc_predefs.h"
+						Description="Generate moc_predefs.h"
+						Outputs="debug\moc_predefs.h"
+						Path="." />
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="release\moc_predefs.h.cbt">
+				<FileConfiguration
+					Name="Release|x64">
+					<Tool
+						Name="VCCustomBuildTool"
+						AdditionalDependencies="D:\QT\5.12.0\MSVC2017_64\mkspecs\features\data\dummy.cpp"
+						CommandLine="cl -Bx&quot;$(QTDIR)\bin\qmake.exe&quot; -nologo -Zc:wchar_t -O2 -MD -W3 -w34100 -w34189 -w44996 -E D:\QT\5.12.0\MSVC2017_64\mkspecs\features\data\dummy.cpp 2>NUL >release\moc_predefs.h"
+						Description="Generate moc_predefs.h"
+						Outputs="release\moc_predefs.h"
+						Path="." />
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Debug|x64"
+					ExcludedFromBuild="true" />
+			</File>
+			<File
+				RelativePath="debug\moc_serialportdialog.cpp">
+				<FileConfiguration
+					Name="Release|x64"
+					ExcludedFromBuild="true" />
+			</File>
+			<File
+				RelativePath="release\moc_serialportdialog.cpp">
+				<FileConfiguration
+					Name="Debug|x64"
+					ExcludedFromBuild="true" />
+			</File>
+			<File
+				RelativePath="debug\moc_treeviewmodel.cpp">
+				<FileConfiguration
+					Name="Release|x64"
+					ExcludedFromBuild="true" />
+			</File>
+			<File
+				RelativePath="release\moc_treeviewmodel.cpp">
+				<FileConfiguration
+					Name="Debug|x64"
+					ExcludedFromBuild="true" />
+			</File>
+			<File
+				RelativePath="ui_dataconfigdialog.h" />
+			<File
+				RelativePath="ui_mainwidget.h" />
+			<File
+				RelativePath="ui_portdialog.h" />
+			<File
+				RelativePath="ui_serialportdialog.h" />
+		</Filter>
+		<Filter
+			Name="Form Files"
+			Filter="ui"
+			UniqueIdentifier="{99349809-55BA-4b9d-BF79-8FDBB0286EB3}"
+			ParseFiles="false">
+			<File
+				RelativePath="dataconfigdialog.ui">
+				<FileConfiguration
+					Name="Release|x64">
+					<Tool
+						Name="VCCustomBuildTool"
+						AdditionalDependencies="dataconfigdialog.ui;D:\QT\5.12.0\MSVC2017_64\bin\uic.exe"
+						CommandLine="D:\QT\5.12.0\MSVC2017_64\bin\uic.exe dataconfigdialog.ui -o ui_dataconfigdialog.h"
+						Description="UIC dataconfigdialog.ui"
+						Outputs="ui_dataconfigdialog.h"
+						Path="D:\QT\5.12.0\MSVC2017_64\bin" />
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Debug|x64">
+					<Tool
+						Name="VCCustomBuildTool"
+						AdditionalDependencies="dataconfigdialog.ui;D:\QT\5.12.0\MSVC2017_64\bin\uic.exe"
+						CommandLine="D:\QT\5.12.0\MSVC2017_64\bin\uic.exe dataconfigdialog.ui -o ui_dataconfigdialog.h"
+						Description="UIC dataconfigdialog.ui"
+						Outputs="ui_dataconfigdialog.h"
+						Path="D:\QT\5.12.0\MSVC2017_64\bin" />
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="mainwidget.ui">
+				<FileConfiguration
+					Name="Release|x64">
+					<Tool
+						Name="VCCustomBuildTool"
+						AdditionalDependencies="mainwidget.ui;D:\QT\5.12.0\MSVC2017_64\bin\uic.exe"
+						CommandLine="D:\QT\5.12.0\MSVC2017_64\bin\uic.exe mainwidget.ui -o ui_mainwidget.h"
+						Description="UIC mainwidget.ui"
+						Outputs="ui_mainwidget.h"
+						Path="D:\QT\5.12.0\MSVC2017_64\bin" />
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Debug|x64">
+					<Tool
+						Name="VCCustomBuildTool"
+						AdditionalDependencies="mainwidget.ui;D:\QT\5.12.0\MSVC2017_64\bin\uic.exe"
+						CommandLine="D:\QT\5.12.0\MSVC2017_64\bin\uic.exe mainwidget.ui -o ui_mainwidget.h"
+						Description="UIC mainwidget.ui"
+						Outputs="ui_mainwidget.h"
+						Path="D:\QT\5.12.0\MSVC2017_64\bin" />
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="portdialog.ui">
+				<FileConfiguration
+					Name="Release|x64">
+					<Tool
+						Name="VCCustomBuildTool"
+						AdditionalDependencies="portdialog.ui;D:\QT\5.12.0\MSVC2017_64\bin\uic.exe"
+						CommandLine="D:\QT\5.12.0\MSVC2017_64\bin\uic.exe portdialog.ui -o ui_portdialog.h&#x000D;&#x000A;if errorlevel 1 goto VCReportError&#x000D;&#x000A;D:\QT\5.12.0\MSVC2017_64\bin\uic.exe portdialog.ui -o ui_portdialog.h"
+						Description="UIC portdialog.ui, UIC portdialog.ui"
+						Outputs="ui_portdialog.h;ui_portdialog.h"
+						Path="D:\QT\5.12.0\MSVC2017_64\bin" />
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Debug|x64">
+					<Tool
+						Name="VCCustomBuildTool"
+						AdditionalDependencies="portdialog.ui;D:\QT\5.12.0\MSVC2017_64\bin\uic.exe"
+						CommandLine="D:\QT\5.12.0\MSVC2017_64\bin\uic.exe portdialog.ui -o ui_portdialog.h&#x000D;&#x000A;if errorlevel 1 goto VCReportError&#x000D;&#x000A;D:\QT\5.12.0\MSVC2017_64\bin\uic.exe portdialog.ui -o ui_portdialog.h"
+						Description="UIC portdialog.ui, UIC portdialog.ui"
+						Outputs="ui_portdialog.h;ui_portdialog.h"
+						Path="D:\QT\5.12.0\MSVC2017_64\bin" />
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="serialportdialog.ui">
+				<FileConfiguration
+					Name="Release|x64">
+					<Tool
+						Name="VCCustomBuildTool"
+						AdditionalDependencies="serialportdialog.ui;D:\QT\5.12.0\MSVC2017_64\bin\uic.exe"
+						CommandLine="D:\QT\5.12.0\MSVC2017_64\bin\uic.exe serialportdialog.ui -o ui_serialportdialog.h"
+						Description="UIC serialportdialog.ui"
+						Outputs="ui_serialportdialog.h"
+						Path="D:\QT\5.12.0\MSVC2017_64\bin" />
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Debug|x64">
+					<Tool
+						Name="VCCustomBuildTool"
+						AdditionalDependencies="serialportdialog.ui;D:\QT\5.12.0\MSVC2017_64\bin\uic.exe"
+						CommandLine="D:\QT\5.12.0\MSVC2017_64\bin\uic.exe serialportdialog.ui -o ui_serialportdialog.h"
+						Description="UIC serialportdialog.ui"
+						Outputs="ui_serialportdialog.h"
+						Path="D:\QT\5.12.0\MSVC2017_64\bin" />
+				</FileConfiguration>
+			</File>
+		</Filter>
+	</Files>
+	<Globals>
+	</Globals>
+</VisualStudioProject>
