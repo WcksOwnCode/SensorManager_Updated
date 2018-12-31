@@ -13,7 +13,6 @@ enum _type{
     LESS,
     EQUAL,
     GREATER,
-
 };
 enum _Logi{
     LOGI_NONE,

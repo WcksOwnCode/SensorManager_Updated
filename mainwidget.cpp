@@ -9,6 +9,8 @@
 #include <QTimer>
 #include <QHostInfo>
 #include <iostream>
+#include <fstream>
+#include <ostream>
 
 MainWidget::MainWidget(QWidget *parent) :
     QWidget(parent),
@@ -96,14 +98,25 @@ void MainWidget::BinaryConfigWrite_Read(_ConfigType ty,QString ConfigAddr){
 
     }
     if(ty==WRITE_CON){
-        //write
+            QString binaryFilename="F://banary.txt";
+        QFile file(binaryFilename);
+                if(!file.exists())return;
+                file.open(QIODevice::WriteOnly);
+                //List<T> *p=root;
+             /*   while(p)
+                {
+                    file.write((char*)(&(p->data)),sizeof(T));
+                    p=p->next;
+                }*/
+                file.close();
+
 
     }
 }
 void MainWidget::Initialize_Environment(){
     PromptInfomation("初始化.");
 
-    ConfigAddress=QCoreApplication::applicationDirPath()+QString::number(GlobeObject::port_)+"_Config.ini";
+    ConfigAddress=QCoreApplication::applicationDirPath()+"/"+QString::number(GlobeObject::port_)+"_Config.ini";
     testtier->stop();
     if(m_bDatabaseAcvated){
         Db=QSqlDatabase::addDatabase("QSQLITE","DeviceData");
@@ -150,7 +163,7 @@ void MainWidget::Initialize_Environment(){
         QFile check(ConfigAddress);
         configIniWriter=new QSettings(ConfigAddress, QSettings::IniFormat);
         if(check.exists()){
-            ReadConfigFile();
+           ConfigerFileSupvisor(READ_CON);
         }
     }
     ui->Chart_tabWidget->setTabText(0,"Acc");
@@ -198,33 +211,84 @@ void MainWidget::Initialize_Environment(){
 }
 void MainWidget::ConfigerFileSupvisor(int method){
     qDebug()<<"Config supervisor";
+    QFile check(ConfigAddress);
     switch (method) {
     case READ_CON:
+        ReadConfigFile();
         break;
-    case WRITE_CON:
-        qDebug()<<"write ";
-        ConfigeIniWrite("General/Time",QDateTime::currentDateTime().toString("yyyy-MM-dd HH:mm:ss"));
-        //write connecter device
-        ConfigeIniWrite("General/DeviceCount",QString::number(ConnectDevList.length()));
-        ConfigeIniWrite("General/RenameCount",QString::number(RenemeDeviceList.length()));
-        ConfigeIniWrite("General/BlockCount",QString::number(BlockList.length()));
-        for(int i=0;i<ConnectDevList.length();i++){
-            ConfigeIniWrite("/Device"+QString::number(i)+"/Mac",ConnectDevList[i]->mac);
-            ConfigeIniWrite("/Device"+QString::number(i)+"/Name",ConnectDevList[i]->name);
+    case WRITE_CON:               
+        if(check.exists()){
+            check.remove();
+            delete configIniWriter;
+            configIniWriter=nullptr;
+            configIniWriter=new QSettings(ConfigAddress, QSettings::IniFormat);
         }
-        //write rename list
-        for(int i=0;i<RenemeDeviceList.length();i+=2){
-            ConfigeIniWrite("/Rename"+QString::number(i)+"/"+RenemeDeviceList[i],RenemeDeviceList[i+1]);
-        }
-        //write block list
-        for(int i=0;i<BlockList.length();i+=2){
-            ConfigeIniWrite("/Block"+QString::number(i)+"/"+BlockList[i],BlockList[i+1]);
-        }
+        ConfigWriter();
         break;
     case READ_AND_WRITE:
         break;
     case DELETE_CON:
         break;
+    }
+}
+void MainWidget::ConfigWriter(){
+    qDebug()<<"WRITE_CON";
+    ConfigeIniWrite("General/Time",QDateTime::currentDateTime().toString("yyyy-MM-dd HH:mm:ss"));
+    //write connecter device
+    ConfigeIniWrite("General/DeviceCount",QString::number(ConnectDevList.length()));
+    ConfigeIniWrite("General/RenameCount",QString::number(RenemeDeviceList.length()));
+    ConfigeIniWrite("General/BlockCount",QString::number(BlockList.length()));
+    //device info write
+    for(int i=0;i<ConnectDevList.length();i++){
+        ConfigeIniWrite("/Device"+QString::number(i)+"/Mac",ConnectDevList[i]->mac);
+        ConfigeIniWrite("/Device"+QString::number(i)+"/Name",ConnectDevList[i]->name);
+        ConfigeIniWrite("/Device"+QString::number(i)+"/RSSI",QString::number(ConnectDevList[i]->rssi));
+        //修正系数
+        ConfigeIniWrite("/Device"+QString::number(i)+"/CorrAccX",QString::number(ConnectDevList[i]->Corr_Coe.CorrAccX));
+        ConfigeIniWrite("/Device"+QString::number(i)+"/CorrAccY",QString::number(ConnectDevList[i]->Corr_Coe.CorrAccY));
+        ConfigeIniWrite("/Device"+QString::number(i)+"/CorrAccZ",QString::number(ConnectDevList[i]->Corr_Coe.CorrAccZ));
+        ConfigeIniWrite("/Device"+QString::number(i)+"/CorrAlpha",QString::number(ConnectDevList[i]->Corr_Coe.CorrAccX));
+        ConfigeIniWrite("/Device"+QString::number(i)+"/CorrBeta",QString::number(ConnectDevList[i]->Corr_Coe.CorrAccY));
+        ConfigeIniWrite("/Device"+QString::number(i)+"/CorrGama",QString::number(ConnectDevList[i]->Corr_Coe.CorrAccZ));
+        ConfigeIniWrite("/Device"+QString::number(i)+"/CorrDistanceA",QString::number(ConnectDevList[i]->Corr_Coe.CorrAccX));
+        ConfigeIniWrite("/Device"+QString::number(i)+"/CorrDistanceB",QString::number(ConnectDevList[i]->Corr_Coe.CorrAccY));
+        ConfigeIniWrite("/Device"+QString::number(i)+"/CorrDistanceC",QString::number(ConnectDevList[i]->Corr_Coe.CorrAccZ));
+        ConfigeIniWrite("/Device"+QString::number(i)+"/CorrLight",QString::number(ConnectDevList[i]->Corr_Coe.CorrAccX));
+        ConfigeIniWrite("/Device"+QString::number(i)+"/CorrIR",QString::number(ConnectDevList[i]->Corr_Coe.CorrAccY));
+        ConfigeIniWrite("/Device"+QString::number(i)+"/CorrTempA",QString::number(ConnectDevList[i]->Corr_Coe.CorrAccZ));
+        ConfigeIniWrite("/Device"+QString::number(i)+"/CorrTempB",QString::number(ConnectDevList[i]->Corr_Coe.CorrAccX));
+        ConfigeIniWrite("/Device"+QString::number(i)+"/CorrTempC",QString::number(ConnectDevList[i]->Corr_Coe.CorrAccY));
+        //控制策略
+        ConfigeIniWrite("/Device"+QString::number(i)+
+                        "/Method_count",QString::number(ConnectDevList[i]->ControlMethodList.length()));
+        for(int q=0;q<ConnectDevList[i]->ControlMethodList.length();q++){
+          ConfigeIniWrite("/Device"+QString::number(i)+
+                          "/Method_sequece",QString::number(ConnectDevList[i]->ControlMethodList[0]->sequece));
+          ConfigeIniWrite("/Device"+QString::number(i)+
+                          "/Method_sym_one",QString::number(ConnectDevList[i]->ControlMethodList[0]->i_sym_one));
+          ConfigeIniWrite("/Device"+QString::number(i)+
+                          "/Method_value_int",QString::number(ConnectDevList[i]->ControlMethodList[0]->i_value));
+          ConfigeIniWrite("/Device"+QString::number(i)+
+                          "/Method_value_float",QString::number(ConnectDevList[i]->ControlMethodList[0]->f_value));
+          ConfigeIniWrite("/Device"+QString::number(i)+
+                          "/Method_sym_two",QString::number(ConnectDevList[i]->ControlMethodList[0]->sequece));
+          ConfigeIniWrite("/Device"+QString::number(i)+
+                          "/Method_value_2_int",QString::number(ConnectDevList[i]->ControlMethodList[0]->sequece));
+          ConfigeIniWrite("/Device"+QString::number(i)+
+                          "/Method_value_2_float",QString::number(ConnectDevList[i]->ControlMethodList[0]->sequece));
+          ConfigeIniWrite("/Device"+QString::number(i)+
+                          "/Method_Message_",QString::number(ConnectDevList[i]->ControlMethodList[0]->sequece));
+          ConfigeIniWrite("/Device"+QString::number(i)+
+                          "/Method_Log",QString::number(ConnectDevList[i]->ControlMethodList[0]->sequece));
+        }
+    }
+    //write rename list
+    for(int i=0;i<RenemeDeviceList.length();i+=2){
+        ConfigeIniWrite("/Rename"+QString::number(i)+"/"+RenemeDeviceList[i],RenemeDeviceList[i+1]);
+    }
+    //write block list
+    for(int i=0;i<BlockList.length();i+=2){
+        ConfigeIniWrite("/Block"+QString::number(i)+"/"+BlockList[i],BlockList[i+1]);
     }
 }
 void MainWidget::ConfigeIniWrite(QString key,QString value){
@@ -1749,11 +1813,48 @@ void MainWidget::InsertDatatoDB(DeviceInfo df){
 }
 void MainWidget::ReadConfigFile(){
     if(configIniWriter!=nullptr){
+        PromptInfomation("Load config files....");
         int c=configIniWriter->value("General/DeviceCount").toString().toInt();
         for(int i=0;i<c;i++){
-            QString mac=configIniWriter->value("Device"+QString::number(i)+"/Mac").toString();
-            QString name=configIniWriter->value("Device"+QString::number(i)+"/Name").toString();
-            NeedToConnected.push_back(mac);
+
+
+            //NeedToConnected.push_back(mac);
+            DeviceInfo *newdev=new DeviceInfo();
+            newdev->mac=configIniWriter->value("Device"+QString::number(i)+"/Mac").toString();
+            newdev->name=configIniWriter->value("Device"+QString::number(i)+"/Name").toString();
+            newdev->rssi=configIniWriter->value("/Device"+QString::number(i)+"/RSSI").toString().toShort();
+            newdev->Corr_Coe.CorrAccX=configIniWriter->value("/Device"+QString::number(i)+"/CorrAccX").toString().toShort();
+            newdev->Corr_Coe.CorrAccY=configIniWriter->value("/Device"+QString::number(i)+"/CorrAccY").toString().toShort();
+            newdev->Corr_Coe.CorrAccZ=configIniWriter->value("/Device"+QString::number(i)+"/CorrAccZ").toString().toShort();
+            newdev->Corr_Coe.CorrAlpha=configIniWriter->value("/Device"+QString::number(i)+"/CorrAlpha").toString().toShort();
+            newdev->Corr_Coe.CorrBeta=configIniWriter->value("/Device"+QString::number(i)+"/CorrBeta").toString().toShort();
+            newdev->Corr_Coe.CorrGama=configIniWriter->value("/Device"+QString::number(i)+"/CorrGama").toString().toShort();
+            newdev->Corr_Coe.CorrDistanceA=configIniWriter->value("/Device"+QString::number(i)+"/CorrDistanceA").toString().toShort();
+            newdev->Corr_Coe.CorrDistanceB=configIniWriter->value("/Device"+QString::number(i)+"/CorrDistanceB").toString().toShort();
+            newdev->Corr_Coe.CorrDistanceC=configIniWriter->value("/Device"+QString::number(i)+"/CorrDistanceC").toString().toShort();
+            newdev->Corr_Coe.CorrLight=configIniWriter->value("/Device"+QString::number(i)+"/CorrLight").toString().toShort();
+            newdev->Corr_Coe.CorrIR=configIniWriter->value("/Device"+QString::number(i)+"/CorrIR").toString().toShort();
+            newdev->Corr_Coe.CorrTempA=configIniWriter->value("/Device"+QString::number(i)+"/CorrTempA").toString().toShort();
+            newdev->Corr_Coe.CorrTempB=configIniWriter->value("/Device"+QString::number(i)+"/CorrTempB").toString().toShort();
+            newdev->Corr_Coe.CorrTempC=configIniWriter->value("/Device"+QString::number(i)+"/CorrTempC").toString().toShort();
+
+            int methodcount=configIniWriter->value("/Device"+QString::number(i)+
+                                                   "/Method_count").toString().toInt();
+            for(int q=0;q<methodcount;q++){
+               Method *M=new Method;
+
+               M->_Log=_Logi(configIniWriter->value("/Device"+QString::number(i)+"/Method_Log").toString().toInt());
+               M->i_sym_one=_type(configIniWriter->value("/Device"+QString::number(i)+"/Method_sym_one").toInt());
+               M->i_sym_two=_type(configIniWriter->value("/Device"+QString::number(i)+"/Method_sym_two").toInt());
+               M->i_value=configIniWriter->value("/Device"+QString::number(i)+"/Method_value_int").toInt();
+               M->i_value_2=configIniWriter->value("/Device"+QString::number(i)+"/Method_value_2_int").toInt();
+               M->f_value=configIniWriter->value("/Device"+QString::number(i)+"/Method_value_float").toFloat();
+               M->f_value_2=configIniWriter->value("/Device"+QString::number(i)+"/Method_value_2_float").toFloat();
+               M->Message_=configIniWriter->value("/Device"+QString::number(i)+"/Method_Message_").toInt();
+               M->sequece=configIniWriter->value("/Device"+QString::number(i)+"/Method_sequece").toInt();
+            }
+
+            DeviceList_Confit.push_back(newdev);
         }
         c=configIniWriter->value("General/RenameCount").toString().toInt();
         for(int i=0;i<c;i++){
@@ -1767,6 +1868,8 @@ void MainWidget::ReadConfigFile(){
             QString mac=configIniWriter->value("Device"+QString::number(i)+"/Mac").toString();
             BlockList.push_back(mac);
         }
+
+        PromptInfomation("Load config files ok!");
     }
 
 }

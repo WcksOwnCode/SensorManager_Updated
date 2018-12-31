@@ -102,6 +102,7 @@ public:
     void ShowDataOnTable();
     void ItemBeClicked(const QModelIndex &index);
     void Initialize_Environment();
+    void ConfigWriter();
     void ConfigeIniWrite(QString key,QString value);
     QString HexTimeToDec(QByteArray t);
     unsigned int HexToDec(QString t);
