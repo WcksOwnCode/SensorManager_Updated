@@ -100,6 +100,11 @@ public:
     static QTcpSocket *Socket_;//通信套接字
     static QTcpServer *Server_;//监听套接字
     static quint16 port_;//端口号
+    static QTcpSocket *Socket_2;//通信套接字
+    static QTcpServer *Server_2;//监听套接字
+    static quint16 port_2;//端口号
+
+
     static  QStringList ControlCommand;
     //template <class T1,class T2>
     //static bool _Assert(T1 v1,T2 v2,_type ty);
@@ -112,38 +117,39 @@ struct ScanListItem{//搜索到的设备
     QString name;
     signed char rssi;
     signed char addrtype;
+    quint16 devPortnum=0;
 };
 struct Datainfo{
-    short motion;
-    short accelx;
-    short accely;
-    short accelz;   
-    short intensity;
-    short IR;
-    short iUV;
-    short distance;
-    float tilt1;
-    float tilt2;
-    float tilt3;
-    float temperature;
+    short motion=0;
+    short accelx=0;
+    short accely=0;
+    short accelz=0;
+    short intensity=0;
+    short IR=0;
+    short iUV=0;
+    short distance=0;
+    float tilt1=0;
+    float tilt2=0;
+    float tilt3=0;
+    float temperature=0;
 };
 
 class DeviceInfo{
 public:
     ~DeviceInfo();
-    QString  mac;
-    QString name;
-    short rssi;
-    short addrtype;
-    uchar mode;
-    uchar state;
-    uchar connfailcount;
-    QString time;
-    short faultcode;//modify at 20180417 uchar->uint
-    short fault;
-    float voltage;//uchar->uint
-    short memory;
-    QString workmode;
+    QString  mac="";
+    QString name="";
+    short rssi=0;
+    short addrtype=0;
+    uchar mode='0';
+    uchar state='0';
+    uchar connfailcount='0';
+    QString time="";
+    short faultcode=0;//modify at 20180417 uchar->uint
+    short fault=0;
+    float voltage=0;//uchar->uint
+    short memory=0;
+    QString workmode="";
     bool waitdata=true;//表示是否在等待接收数据包最后的两个字节
     bool m_bCorrectValue=false;
     Datainfo datainfo; //数据集合
@@ -152,6 +158,9 @@ public:
     QVector<Method*> ControlMethodList;
     const int ControlMethodCount_Max=5;
     int MethodCount[12]={0};
+    quint16 devPortnum=0;
+    QString newname="";
+    bool dataIntgrality=false;
     /*
     0 short motion;
     1 short accelx;

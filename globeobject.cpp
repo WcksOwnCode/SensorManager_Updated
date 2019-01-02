@@ -4,6 +4,11 @@
 quint16  GlobeObject::port_=0;
 QTcpServer * GlobeObject::Server_=nullptr;
 QTcpSocket * GlobeObject::Socket_=nullptr;
+
+quint16  GlobeObject::port_2=0;
+QTcpServer * GlobeObject::Server_2=nullptr;
+QTcpSocket * GlobeObject::Socket_2=nullptr;
+
 QSerialPort *GlobeObject::serial=nullptr;
 GlobeObject::GlobeObject()
 {

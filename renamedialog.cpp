@@ -19,6 +19,7 @@ RenameDialog::~RenameDialog()
 void RenameDialog::on_Accept_pushButton_clicked()
 {
     emit NewName(ui->Rename_lineEdit->text(),Mac);
+    this->close();
 }
 
 void RenameDialog::on_Cancel_pushButton_clicked()

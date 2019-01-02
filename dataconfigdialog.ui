@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>641</width>
-    <height>305</height>
+    <width>644</width>
+    <height>532</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -17,7 +17,7 @@
    <property name="geometry">
     <rect>
      <x>560</x>
-     <y>100</y>
+     <y>110</y>
      <width>75</width>
      <height>23</height>
     </rect>
@@ -42,8 +42,8 @@
   <widget class="QPushButton" name="ConnectDB_pushButton">
    <property name="geometry">
     <rect>
-     <x>160</x>
-     <y>260</y>
+     <x>20</x>
+     <y>200</y>
      <width>111</width>
      <height>23</height>
     </rect>
@@ -123,7 +123,7 @@
    <property name="geometry">
     <rect>
      <x>10</x>
-     <y>120</y>
+     <y>100</y>
      <width>116</width>
      <height>14</height>
     </rect>
@@ -145,11 +145,11 @@
     </item>
    </layout>
   </widget>
-  <widget class="QWidget" name="">
+  <widget class="QWidget" name="layoutWidget">
    <property name="geometry">
     <rect>
      <x>10</x>
-     <y>170</y>
+     <y>120</y>
      <width>135</width>
      <height>69</height>
     </rect>
@@ -174,7 +174,37 @@
     </item>
    </layout>
   </widget>
+  <widget class="QtCharts::QChartView" name="ChartView">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>260</y>
+     <width>621</width>
+     <height>261</height>
+    </rect>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="DrawOnchart_pushButton">
+   <property name="geometry">
+    <rect>
+     <x>560</x>
+     <y>190</y>
+     <width>75</width>
+     <height>23</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>画图</string>
+   </property>
+  </widget>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>QtCharts::QChartView</class>
+   <extends>QGraphicsView</extends>
+   <header location="global">qchartview.h</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>

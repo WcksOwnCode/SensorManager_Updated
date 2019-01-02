@@ -9,7 +9,11 @@ SensorConfig_Dialog::SensorConfig_Dialog(QList<DeviceInfo *> DL, QWidget *parent
     qDebug()<<"dadsda1";
     ui->setupUi(this);
     qDebug()<<"dadsda2";
+    ui->Mac_comboBox->addItem("");
 
+   ui->Name_comboBox->addItem("");
+
+    ui->DataType_comboBox->addItem("");
     qDebug()<<"dadsda5";
     for(int i=0;i<DL.length();i++){
         qDebug()<<"i"<<DL.length()<<"  "<<i;
@@ -32,11 +36,7 @@ SensorConfig_Dialog::SensorConfig_Dialog(QList<DeviceInfo *> DL, QWidget *parent
     ui->DataType_comboBox->addItem("gama");
     ui->DataType_comboBox->addItem("temperature");
 
-    ui->Mac_comboBox->addItem("");
 
-   ui->Name_comboBox->addItem("");
-
-    ui->DataType_comboBox->addItem("");
 
     SetCorrEnabled(false);
     SetAllControlEnabled(false);
@@ -230,7 +230,7 @@ void SensorConfig_Dialog::SetValueFromDevice(){
 void SensorConfig_Dialog::on_SetValue_pushButton_clicked()
 {
     int index=ui->Name_comboBox->currentIndex()-1;
-    if(index>=DL.length()){
+    if(index>=DL.length()|index<0){
         qDebug()<<"index out of range "<<index<<"   length is "<<DL.length();
         return;
     }

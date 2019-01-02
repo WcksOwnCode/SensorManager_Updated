@@ -12,6 +12,8 @@ int main(int argc, char *argv[])
     PortDialog pd;
     if(QDialog::Accepted==pd.exec()){
         MainWidget w;
+
+
          w.show();
         return a.exec();
     }

@@ -1,5 +1,6 @@
 <RCC>
     <qresource prefix="/new/logo">
         <file>rsc/logo.jpg</file>
+        <file>rsc/resize.bmp</file>
     </qresource>
 </RCC>

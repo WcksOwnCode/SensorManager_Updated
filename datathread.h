@@ -5,6 +5,10 @@
 #include <QThread>
 #include <QDebug>
 #include "globeobject.h"
+#include <QChart>
+#include <QValueAxis>
+#include <QLineSeries>
+#include <QValueAxis>
 //#include "mainwidget.h"
 class DataThread:public QObject
 {
@@ -21,6 +25,7 @@ public:
     inline bool isBusy(){
         return m_bBusy;
     }
+    QString HexToDec(QByteArray arr);
 signals:
     void dataproDone(QString datainfo);
     void workDone(DeviceInfo *dev,int index);

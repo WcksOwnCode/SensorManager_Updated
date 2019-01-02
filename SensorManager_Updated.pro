@@ -9,7 +9,7 @@ QT       += network
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 QT       += serialport
 QT       += sql
-QT       +=charts
+QT       += charts
 TARGET = SensorManager_Updated
 TEMPLATE = app
 

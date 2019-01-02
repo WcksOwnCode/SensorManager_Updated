@@ -79,22 +79,25 @@ public:
     void InquireDev(unsigned char action,unsigned char mod,unsigned char time);
     void BtnDeviceScan();
     bool BdaddrIsZero(QString addr);
+    void TCPconnector();
+    void DataBaseLuncher();
     void FileOutput(QString str, QString add, int method, DeviceInfo *df,CsvWriter *writer);
     void InfoHanddler(QString info);
-    void InfoHanddler_new(QString info);
-    void InqueryProc(QStringList &strList);
-    void NotifyProc(QStringList &strList);
-    void CharacteristicProc(QStringList &strList);
+    void InfoHanddler_new(QString info,int p=0);
+    QStringList StringFileter(QString info,int p=0);
+    void InqueryProc(QStringList &strList, int px);
+    void NotifyProc(QStringList &strList, int px);
+    void CharacteristicProc(QStringList &strList, int p);
     void DiscProc(QStringList &strList);
     void DataParser(QByteArray data);
     void ConnectToDevice(QModelIndex curIndex);
-    void DisconnetDeviceTrigged(QString Mac);
+    void DisconnetDeviceTrigged(QString Mac, quint16 p);
     void ConnectChoosedDevice();
-    void ReadSingelDeviceData(QString Mac);
+    void ReadSingelDeviceData(QString Mac, quint16 po);
     int infoSpliter(QString info, QStringList &returnstr);
     void ReadDev(QString Mac);
-    void SendDatatoDev(QString Mac,QString charc,QString dat);
-    void GetSingleSensorRSSI(QString Mac);
+    void SendDatatoDev(QString Mac, QString charc, QString dat, int po);
+    void GetSingleSensorRSSI(QString Mac,quint16 po);
     void TimerTimerOut();
     void SensorDataConvert(QByteArray fore, QByteArray back, QString Mac);
     QString TimeStyleConvert(QByteArray time);
@@ -106,7 +109,7 @@ public:
     void ConfigeIniWrite(QString key,QString value);
     QString HexTimeToDec(QByteArray t);
     unsigned int HexToDec(QString t);
-    void ReadDevice(QString mac);
+    void ReadDevice(QString mac, quint16 po);
     void DeviceRename(QString Name, QString Mac);
     void PushRenametoList(QString Name,QString Mac);
     void ConfigerFileSupvisor(int method);
@@ -127,12 +130,13 @@ public:
     void ThreadLunchar();
     void SerailState(QString name);
     void BinaryConfigWrite_Read(_ConfigType ty,QString ConfigAddr);
+    static QString HexToDec(QByteArray arr);
 private slots:
     void OtherDeviceMenu(const QPoint &pos);
     void ConectedDeviceMenu(const QPoint &pos);
     void on_SerialPortConfig_pushButton_clicked();
     void on_Device_tabWidget_tabBarClicked(int index);
-    void ConnectActionTrigged(QString Mac, signed char ty);  
+    void ConnectActionTrigged(QString Mac, quint16 port, signed char ty);
     void on_Exit_pushButton_clicked();
     void GetDataFromProcessor(QStringList info);
     void on_DataConfig_pushButton_clicked();
@@ -150,8 +154,11 @@ signals:
     void DataPthreadStart(QString s);
     void DataNeedtoDeal(QByteArray fore, QByteArray back,DeviceInfo *dev,int index);
 
+protected:
+     void closeEvent(QCloseEvent *event);
 private:
     Ui::MainWidget *ui;
+    const int VERSION=1000;
     const unsigned char INQUIRE_SECONDS=6;//搜索持续时间
     const int   MAX_SCAN_COUNT=32;
     const int	MAX_DEV_COUNT=18;
@@ -163,7 +170,7 @@ private:
     TreeViewModel* m_ScanList=nullptr;
     QList<ScanListItem*> ScanDevList;
     QList<DeviceInfo*> ConnectDevList;
-    QList<DeviceInfo*> DeviceList_Confit;
+    QList<DeviceInfo*> DeviceList_Config;
     bool m_bTCPConnected;
     bool m_bSearching;
     bool m_bBLEconnect_state;
@@ -211,7 +218,7 @@ private:
     QSqlQuery query;
     QVariantList idList;
     bool m_bShowOnCharts;
-    QPen RedPen ,GreenPen,BluePen,YellowPen,BlackPen,SelfDesignPen;
+
     int PenWidth=3;
     QValueAxis *axisX[6]={nullptr};
     QValueAxis *axisY[6]={nullptr};
@@ -233,13 +240,17 @@ private:
     QVector<QString>NeedToConnected;
     bool m_bConfigAcvated=true;
     bool m_bDatabaseAcvated=true;
-    bool m_bCsvAcvated=true;
+    bool m_bCsvAcvated=false;
     EnvironmentConfig *env=nullptr;
     QString CsvUpperAddr=QCoreApplication::applicationDirPath()+"/";
     QString DBaddr="./";
     int DbCount=0;
     QHostInfo ip_info;
     SensorConfig_Dialog *Sc=nullptr;
+    QStandardItemModel* model_Con =nullptr;
+    QStandardItemModel* model_Scan =nullptr;
+    bool m_bTcp_1_con=false;
+    bool m_bTcp_2_con=false;
 };
 
 
