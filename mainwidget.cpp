@@ -1,7 +1,7 @@
 #include "mainwidget.h"
 #include "ui_mainwidget.h"
 #include <QTabWidget>
-#include "globeobject.h"
+#include "GlobalObject.h"
 #include <QTcpServer>
 #include "treeviewmodel.h"
 #include <QMenu>
@@ -27,6 +27,7 @@ MainWidget::MainWidget(QWidget *parent) :
     pal.setColor(QPalette::Background, QColor(255,255,255));
     this->setAutoFillBackground(true);
     this->setPalette(pal);
+
     QImage img;
     if(img.load(":/new/logo/rsc/resize.bmp"))//execute qmake before load
     {
@@ -34,7 +35,11 @@ MainWidget::MainWidget(QWidget *parent) :
         QPixmap qp=QPixmap::fromImage(img2);
         ui->biglogo_label->setPixmap(qp);
     }
-
+    RssiInqTimer=new QTimer(this);
+    connect(RssiInqTimer,&QTimer::timeout,this,[=]{
+        CirculationTask(0);
+    });
+    RssiInqTimer->start(20000);
 }
 MainWidget::~MainWidget()
 {
@@ -43,9 +48,9 @@ MainWidget::~MainWidget()
         DisconnetDeviceTrigged(ConnectDevList[q]->mac,ConnectDevList[q]->devPortnum);
     }
     qDebug()<<"1";
-    GlobeObject::Server_->close();
+    GlobalObject::Server_->close();
     if(m_bTCPConnected==true){
-        GlobeObject::Socket_->close();
+        GlobalObject::Socket_->close();
     }
     qDebug()<<"2";
     if(testtier->isActive()){
@@ -80,7 +85,40 @@ MainWidget::~MainWidget()
     qDebug()<<"6";
     Db.close();
     qDebug()<<"7";
+    if(Distancechart!=nullptr){
+        delete Distancechart;
+        Distancechart=nullptr;
+    }
+    if(IRchart!=nullptr){
+        delete IRchart;
+        IRchart=nullptr;
+    }
+    if(IUVchart!=nullptr){
+        delete IUVchart;
+        IUVchart=nullptr;
+    }
+    if(Motionchart!=nullptr){
+        delete Motionchart;
+        Motionchart=nullptr;
+    }
+    if(Distanceseries!=nullptr){
+        delete Distanceseries;
+        Distanceseries=nullptr;
+    }
+    if(IRseries!=nullptr){
+        delete IRseries;
+        IRseries=nullptr;
+    }
 
+    if(IUVseries!=nullptr){
+        delete IUVseries;
+        IUVseries=nullptr;
+    }
+
+    if(Motionseries!=nullptr){
+        delete Motionseries;
+        Motionseries=nullptr;
+    }
     qDebug()<<"8";
     if(Sc!=nullptr){
         delete Sc;
@@ -127,7 +165,7 @@ void MainWidget::BinaryConfigWrite_Read(_ConfigType ty,QString ConfigAddr){
 void MainWidget::Initialize_Environment(){
     PromptInfomation("初始化.");
 
-    ConfigAddress=QCoreApplication::applicationDirPath()+"/"+QString::number(GlobeObject::port_)+"_Config.ini";
+    ConfigAddress=QCoreApplication::applicationDirPath()+"/"+QString::number(GlobalObject::port_)+"_Config.ini";
     testtier->stop();
 
     DataBaseLuncher();
@@ -140,6 +178,7 @@ void MainWidget::Initialize_Environment(){
     connect(ui->OtherDevicetree_Wiew,SIGNAL(customContextMenuRequested(const QPoint& )),this,SLOT(OtherDeviceMenu(const QPoint&)));//右键菜单草
     connect(ui->ConnectedDevice_treeView,SIGNAL(customContextMenuRequested(const QPoint& )),this,SLOT(ConectedDeviceMenu(const QPoint&)));//右键菜单草
     connect(ui->ConnectedDevice_treeView,&QTreeView::clicked,this,&MainWidget::ItemBeClicked);
+
     if(m_bConfigAcvated){
         QFile check(ConfigAddress);
         configIniWriter=new QSettings(ConfigAddress, QSettings::IniFormat);
@@ -160,37 +199,37 @@ void MainWidget::Initialize_Environment(){
 }
 void MainWidget::TCPconnector(){
     QHostAddress HostAdd(ip_info.addresses()[1]);
-    if(GlobeObject::port_!=0){
+    if(GlobalObject::port_!=0){
         ui->ip_label->setText("本机ip"+(ip_info.addresses())[1].toString());
-        GlobeObject::Server_->listen(HostAdd,GlobeObject::port_);
-        connect(GlobeObject::Server_,&QTcpServer::newConnection,this,[=]{
-            GlobeObject::Socket_=GlobeObject::Server_->nextPendingConnection();
-            ui->Port1_State_label->setText(QString::number(GlobeObject::port_)+"  Connected");
+        GlobalObject::Server_->listen(HostAdd,GlobalObject::port_);
+        connect(GlobalObject::Server_,&QTcpServer::newConnection,this,[=]{
+            GlobalObject::Socket_=GlobalObject::Server_->nextPendingConnection();
+            ui->Port1_State_label->setText(QString::number(GlobalObject::port_)+"  Connected");
             PromptInfomation("TCP connected");
             m_bTcp_1_con=true;
             CurrentSearchingCount=0;
             m_bTCPConnected=true;
-            connect(GlobeObject::Socket_,&QTcpSocket::readyRead,this,[=]{
-                QByteArray s=GlobeObject::Socket_->readAll();
+            connect(GlobalObject::Socket_,&QTcpSocket::readyRead,this,[=]{
+                QByteArray s=GlobalObject::Socket_->readAll();
                 InfoHanddler_new(s,0);
             });
 
         });
     }
     else{
-        if(GlobeObject::port_2!=0&&GlobeObject::port_2!=GlobeObject::port_){
-            GlobeObject::Server_2->listen(HostAdd,GlobeObject::port_2);
-            connect(GlobeObject::Server_2,&QTcpServer::newConnection,this,[=]{
-                GlobeObject::Socket_2=GlobeObject::Server_2->nextPendingConnection();
+        if(GlobalObject::port_2!=0&&GlobalObject::port_2!=GlobalObject::port_){
+            GlobalObject::Server_2->listen(HostAdd,GlobalObject::port_2);
+            connect(GlobalObject::Server_2,&QTcpServer::newConnection,this,[=]{
+                GlobalObject::Socket_2=GlobalObject::Server_2->nextPendingConnection();
                 // ui->ConnectState_Label->setText("已经连接网关 2");
-                ui->Port2_State_label->setText(QString::number(GlobeObject::port_2)+"  Connected");
-                //qDebug()<<"port2"<<GlobeObject::Socket_->isOpen()<<"  "<<GlobeObject::Socket_2->isOpen();
+                ui->Port2_State_label->setText(QString::number(GlobalObject::port_2)+"  Connected");
+                //qDebug()<<"port2"<<GlobalObject::Socket_->isOpen()<<"  "<<GlobalObject::Socket_2->isOpen();
                 //CurrentSearchingCount=0;
                 m_bTcp_2_con=true;
                 m_bTCPConnected=true;
 
-                connect(GlobeObject::Socket_2,&QTcpSocket::readyRead,this,[=]{
-                    QByteArray s=GlobeObject::Socket_2->readAll();
+                connect(GlobalObject::Socket_2,&QTcpSocket::readyRead,this,[=]{
+                    QByteArray s=GlobalObject::Socket_2->readAll();
                     //InfoHanddler(s);
                     InfoHanddler_new(s,1);
                 });
@@ -306,8 +345,6 @@ void MainWidget::ConfigeIniWrite(QString key,QString value){
 }
 void MainWidget::InfoHanddler(QString info){
     //abandoned this
-
-
     //所有接收到的信息都在这里处理
     /*
     qDebug()<<"info  "<<info;
@@ -571,12 +608,11 @@ void MainWidget::InfoHanddler(QString info){
     }*/
 }
 QStringList MainWidget::StringFileter(QString info,int ){
-    //处理数据打包字符串分割
     info.remove(QChar('\n'), Qt::CaseInsensitive);
     info.remove(QChar('\\'), Qt::CaseInsensitive);
     info.remove(QChar('\r'), Qt::CaseInsensitive);
     info.remove(QChar('"'), Qt::CaseInsensitive);
-    // info.remove(QChar(':'), Qt::CaseInsensitive);
+
     info.replace(":",",");
     info.remove(QString("OK"), Qt::CaseInsensitive);
     info.remove(QString("ERROR"), Qt::CaseInsensitive);
@@ -588,35 +624,32 @@ QStringList MainWidget::StringFileter(QString info,int ){
     int pos=0;
     QString meg;
     qDebug()<<"cleared info  "<<info;
+    qDebug()<<"info to list   "<<lists;
     while(pos<len){
         if(lists[pos]=="INQRESULT"|lists[pos]=="NOTIFY"
                 |lists[pos]=="CHARACTERISTIC"|lists[pos]=="RSSI"
                 |lists[pos]=="READCHAR"|lists[pos]=="DISC"
                 |lists[pos]=="INQCOMPLETE"){
+
+
             meg.push_back(";");
-        }
-        if(lists[pos]!=""&&lists[pos].length()>=2){
             meg.push_back(lists[pos]);
             meg.push_back(",");
         }
+        else{
+            meg.push_back(lists[pos]);
+            meg.push_back(",");
+
+        }
         pos++;
-
     }
-        meg.remove(meg.length()-1);
-
     qDebug()<<"meg   "<<meg;
-    ret=meg.split(";");
-    for(int i=0;i<ret.length();i++){
-       if(ret[i].length()<2){
-           ret.removeAt(i);
-       }
+    // meg.remove(meg.length()-1);
 
-    }
+    ret=meg.split(";");
+
     qDebug()<<"ret "<<ret;
     return ret;
-
-
-
 }
 void MainWidget::InfoHanddler_new(QString info, int p){
     //0----INQRESULT
@@ -628,18 +661,15 @@ void MainWidget::InfoHanddler_new(QString info, int p){
     //6----ignore message
     //7-----INQCOMPLETE
     //-1---出错
-
     qDebug()<<"info "<<info;
     QStringList strlist =StringFileter(info);
     for(int q=0;q<strlist.length();q++){
-
-
         QStringList strList;
-        switch (infoSpliter(strlist[q],strList)) {
+        int ret = infoSpliter(strlist[q],strList);
 
+        switch (ret) {
         case -1:
             qDebug()<<"error";
-
             break;
         case 0:
             InqueryProc(strList,p);
@@ -651,11 +681,11 @@ void MainWidget::InfoHanddler_new(QString info, int p){
             CharacteristicProc(strList,p);
             break;
         case 3:
+            //after sp  ("RSSI", "E5AEFA129DDC", "b4", "")
             for(int q=0;q<ConnectDevList.length();q++){
-                if(ConnectDevList[q]->mac==strList[0]){
-                    // qDebug()<<"before "<<strList[1];
-                    ConnectDevList[q]->rssi=static_cast<short>(HexToDec(strList[1]));
-                    //  qDebug()<<"then "<<ConnectDevList[q]->rssi;
+                qDebug()<<"q "<<q<<"str "<<strList[2];
+                if(ConnectDevList[q]->mac==strList[1]){
+                    ConnectDevList[q]->rssi=static_cast<short>(HexToDec(strList[2]))-256;
                 }
             }
             break;
@@ -669,7 +699,7 @@ void MainWidget::InfoHanddler_new(QString info, int p){
             //ok or error, just ignore it
             break;
         case 7:
-            PromptInfomation("搜索完成");
+            PromptInfomation(tr("搜索完成"));
             m_bSearching=false;
             break;
 
@@ -686,28 +716,18 @@ int  MainWidget::infoSpliter(QString info,QStringList &returnstr){
     //5----DISC
     //6----ignore message
     //7-----INQCOMPLETE
-    //-1---出错
+    //-1---error
     if(info.contains("INQRESULT",Qt::CaseInsensitive)){
         // qDebug()<<"\n"<<"info :"<<info<<"\n";
-        info.remove(QString("INQRESULT"), Qt::CaseInsensitive);
-        //  qDebug() << "\n"<<info << "return\n" << endl;
+        //"INQRESULT,A80C6348591C,0,,0,031900000201060302121808ff7d020103002082,-74,"
         returnstr.clear();
         returnstr= info.split(QRegExp(","));
-        for(int i=0;i<returnstr.length();i++){
-            if(returnstr[i].length()<2){
-                returnstr.removeAt(i);
-            }
-        }
+        //" INQRESULT; A80C6348591C; 0; name; 0; 031900000201060302121808ff7d020103002082; -74;"
         return 0;
     }
-    if(info.contains("INQCOMPLETE:",Qt::CaseInsensitive)){
+    if(info.contains("INQCOMPLETE",Qt::CaseInsensitive)){
         PromptInfomation("搜索完成");
         m_bSearching=false;
-        for(int i=0;i<returnstr.length();i++){
-            if(returnstr[i].length()<2){
-                returnstr.removeAt(i);
-            }
-        }
         return 7;
     }
     if(info.contains("OK",Qt::CaseInsensitive)){
@@ -719,65 +739,44 @@ int  MainWidget::infoSpliter(QString info,QStringList &returnstr){
         qDebug()<<"handle error";
         return 6;
     }
-    if(info.contains("CHARACTERISTIC:",Qt::CaseInsensitive)){
-        //conncet success if recive this
-        //qDebug()<<"conected device data";
-        //"\r\n+CHARACTERISTIC:E5AEFA129DDC,fff0,fff2,0c\r\n"
-        info.remove(QString("CHARACTERISTIC:"), Qt::CaseInsensitive);
+    if(info.contains("CHARACTERISTIC",Qt::CaseInsensitive)){
+
         returnstr.clear();
         returnstr= info.split(QRegExp(","));
-        for(int i=0;i<returnstr.length();i++){
-            if(returnstr[i].length()<2){
-                returnstr.removeAt(i);
-            }
-        }
         return 2;
     }
     if(info.contains("DISC")){
         // "\r\n+DISC:E5AEFA129DDC\r\n"
         qDebug()<<"before   "<<info;
-        info.remove(QString("DISC"), Qt::CaseInsensitive);
+        //info.remove(QString("DISC"), Qt::CaseInsensitive);
         qDebug()<<"after  "<<info;
-        //剩下就是mac了
         returnstr.clear();
         returnstr= info.split(QRegExp(","));
-        for(int i=0;i<returnstr.length();i++){
-            if(returnstr[i].length()<2){
-                returnstr.removeAt(i);
-            }
-        }
+
         return 5;
     }
     if(info.contains("NOTIFY",Qt::CaseInsensitive)){
-        /*由于网关的BLE MTU长度为23字节，也就是实际允许接收数据长度最大为20，所以会分两次收完
-        "\r\n+NOTIFY:C4CC019C6A79,fff1,12c0386cdbdb0065019001c7043100bd00d8025c\r\n"
-        "\r\n+NOTIFY:C4CC019C6A79,fff1,0900007a035c00000001fa\r\n"
-       */
-        info.remove(QString("NOTIFY"), Qt::CaseInsensitive);
+        //由于网关的BLE MTU长度为23字节，也就是实际允许接收数据长度最大为20，所以会分两次收完
         returnstr.clear();
         returnstr= info.split(QRegExp(","));
-        for(int i=0;i<returnstr.length();i++){
-            if(returnstr[i].length()<2){
-                returnstr.removeAt(i);
-            }
-        }
+
         return 1;
     }
     if(info.contains("RSSI",Qt::CaseInsensitive)){
-        info.remove(QString("RSSI"), Qt::CaseInsensitive);
-        QStringList strList= info.split(QRegExp(","));
+
+        qDebug()<<"befor sp "<<info;
+        //befor sp  "RSSI,E5AEFA129DDC,b4,"
+        returnstr.clear();
+        returnstr= info.split(QRegExp(","));
+        qDebug()<<"after sp "<<returnstr;
+        //after sp  ("RSSI", "E5AEFA129DDC", "b4", "")
         return 3;
     }
     if(info.contains("READCHAR",Qt::CaseInsensitive)){
         // "\r\n+READCHAR:E5AEFA129DDC,fff2,012001\r\n"
-        info.remove(QString("READCHAR"), Qt::CaseInsensitive);
+        //info.remove(QString("READCHAR"), Qt::CaseInsensitive);
         returnstr.clear();
         returnstr= info.split(QRegExp(","));
-        for(int i=0;i<returnstr.length();i++){
-            if(returnstr[i].length()<2){
-                returnstr.removeAt(i);
-            }
-        }
         return 4;
     }
     else{
@@ -807,7 +806,7 @@ void MainWidget::SensorDataConvert(QByteArray fore, QByteArray back,QString Mac)
         newdevice=nullptr;
     }
     if(!find){
-        qDebug()<<"not find";//这个情况不应该出现的
+        qDebug()<<"not find";
         if(Mac.length()==12){
             newdevice->mac=Mac;
             index=ConnectDevList.length();
@@ -824,259 +823,196 @@ void MainWidget::SensorDataConvert(QByteArray fore, QByteArray back,QString Mac)
     if(fore[0]='1'&&fore[1]=='2'&&fore[2]=='c'){
         //12c0 5a d9 47 26   00 4f   03 20   fd 72   00 13   00 00   ff d8   00 01
         //时间4B+运动量2B+加速度x2B+加速度y2B+加速度z2B+倾角α2B+倾角β2B+倾角γ2B
-        QByteArray  temp1,temp2;
+       qDebug()<<"时间4B+运动量2B+加速度x2B+加速度y2B+加速度z2B+倾角α2B+倾角β2B+倾角γ2B";
+        QByteArray  temp1;
         QString newbyte;
         for(int q=4;q<12;q++){
             temp1.push_back(fore[q]);
         }
         ConnectDevList[index]->time=HexTimeToDec(temp1);
         temp1.clear();
-        temp2.clear();
+
         QDateTime local(QDateTime::currentDateTime());
         QString localTime = local.toString("yyyy-MM-dd:hh:mm:ss");
         //ui->ComputerTime_label->setText(localTime);
-        for(int q=12;q<40;q++){
-            temp1.push_back(fore[q]);
-        }
-        temp2=QByteArray::fromHex(temp1);
+
+
         ConnectDevList[index]->waitdata=true;
-        if(ConnectDevList[index]->m_bCorrectValue){
-            ConnectDevList[index]->datainfo.motion = static_cast<short>((temp2[0]&0xFF)<<8|(temp2[1]&0xFF));
-            ConnectDevList[index]->datainfo.accelx = static_cast<short>((temp2[2]&0xFF)<<8|(temp2[3]&0xFF))+ConnectDevList[index]->Corr_Coe.CorrAccX;
-            ConnectDevList[index]->datainfo.accely = static_cast<short>((temp2[4]&0xFF)<<8|(temp2[5]&0xFF))+ConnectDevList[index]->Corr_Coe.CorrAccY;
-            ConnectDevList[index]->datainfo.accelz = static_cast<short>((temp2[6]&0xFF)<<8|(temp2[7]&0xFF))+ConnectDevList[index]->Corr_Coe.CorrAccZ;
-            ConnectDevList[index]->datainfo.tilt1 = static_cast<float>((temp2[8]&0xFF)<<8|(temp2[9]&0xFF))/1000+ConnectDevList[index]->Corr_Coe.CorrAlpha;
-            ConnectDevList[index]->datainfo.tilt2 = static_cast<float>((temp2[10]&0xFF)<<8|(temp2[11]&0xFF))/1000+ConnectDevList[index]->Corr_Coe.CorrBeta;
-            ConnectDevList[index]->datainfo.tilt3 = static_cast<float>((temp2[12]&0xFF)<<8|(temp2[13]&0xFF))/1000+ConnectDevList[index]->Corr_Coe.CorrGama;
-        }
-        else{
-            ConnectDevList[index]->datainfo.motion = static_cast<short>((temp2[0]&0xFF)<<8|(temp2[1]&0xFF));
-            ConnectDevList[index]->datainfo.accelx = static_cast<short>((temp2[2]&0xFF)<<8|(temp2[3]&0xFF));
-            ConnectDevList[index]->datainfo.accely = static_cast<short>((temp2[4]&0xFF)<<8|(temp2[5]&0xFF));
-            ConnectDevList[index]->datainfo.accelz = static_cast<short>((temp2[6]&0xFF)<<8|(temp2[7]&0xFF));
-            ConnectDevList[index]->datainfo.tilt1 = static_cast<float>((temp2[8]&0xFF)<<8|(temp2[9]&0xFF))/1000;;
-            ConnectDevList[index]->datainfo.tilt2 = static_cast<float>((temp2[10]&0xFF)<<8|(temp2[11]&0xFF))/1000;
-            ConnectDevList[index]->datainfo.tilt3 = static_cast<float>((temp2[12]&0xFF)<<8|(temp2[13]&0xFF))/1000;;
-        }
+            for(int q=12;q<16;q++){
+                temp1.push_back(fore[q]);
+            }
+            ConnectDevList[index]->datainfo.motion = HexToDec(temp1).toShort();
+            temp1.clear();
+            for(int q=16;q<20;q++){
+                temp1.push_back(fore[q]);
+            }
+            ConnectDevList[index]->datainfo.accelx = HexToDec(temp1).toShort();
+            temp1.clear();
+            for(int q=20;q<24;q++){
+                temp1.push_back(fore[q]);
+            }
+            ConnectDevList[index]->datainfo.accely =  HexToDec(temp1).toShort();
+            temp1.clear();
+            for(int q=24;q<28;q++){
+                temp1.push_back(fore[q]);
+            }
+            ConnectDevList[index]->datainfo.accelz = HexToDec(temp1).toShort();
+            temp1.clear();
+            for(int q=28;q<32;q++){
+                temp1.push_back(fore[q]);
+            }
+            ConnectDevList[index]->datainfo.tilt1 = HexTilteToDec(temp1).toFloat();
+            temp1.clear();
+            for(int q=32;q<36;q++){
+                temp1.push_back(fore[q]);
+            }
+            ConnectDevList[index]->datainfo.tilt2 =HexTilteToDec(temp1).toFloat();
+            temp1.clear();
+            for(int q=36;q<40;q++){
+                temp1.push_back(fore[q]);
+            }
+            ConnectDevList[index]->datainfo.tilt3 = HexTilteToDec(temp1).toFloat();
+            temp1.clear();
+            if(ConnectDevList[index]->m_bCorrectValue){
+
+                ConnectDevList[index]->datainfo.accelx +=ConnectDevList[index]->Corr_Coe.CorrAccX;
+                ConnectDevList[index]->datainfo.accely +=ConnectDevList[index]->Corr_Coe.CorrAccY;
+                ConnectDevList[index]->datainfo.accelz +=ConnectDevList[index]->Corr_Coe.CorrAccZ;
+                ConnectDevList[index]->datainfo.tilt1 +=ConnectDevList[index]->Corr_Coe.CorrAlpha;
+                ConnectDevList[index]->datainfo.tilt2 +=ConnectDevList[index]->Corr_Coe.CorrBeta;
+               ConnectDevList[index]->datainfo.tilt3 +=ConnectDevList[index]->Corr_Coe.CorrGama;
+            }
 
     }
     else if(fore[0]='1'&&fore[1]=='1'&&fore[2]=='2'){
-        //1120 5a dd 98 7a   00 00 00 04   00 00   01 00   01 84   00 01   00(时间4B+故障码4B+故障4B+电压2B+可用内存2B+工作模式1B)
+        //1120 5a dd 98 7a   00 00 00 04   00 00 01 00   01 84   00 01   00(时间4B+故障码4B+故障4B+电压2B+可用内存2B+工作模式1B)
+        //"\r\n+NOTIFY:E5AEFA129DDC,fff1,1120386f4fcd000000000000000001a3000101\r\n\r\n+NOTIFY:E5AEFA129DDC,fff1,06b0386f4fcd0000\r\n"
+        //("E5AEFA129DDC", "fff1", "1120 386f558d 00000010 00000011 01a1 0001 01", "fff1", "06b0386f4fcd0000")
+        qDebug()<<"时间4B+故障码4B+故障4B+电压2B+可用内存2B+工作模式1B";
         QByteArray  temp1,temp2;
         QString newbyte;
         for(int q=4;q<12;q++){
             temp1.push_back(fore[q]);
         }
-        //temp2=QByteArray::fromHex(temp1);//time
-
         ConnectDevList[index]->time=HexTimeToDec(temp1);
-        // qDebug()<<"time2 is   "<<ConnectDevList[index];
         temp1.clear();
-        temp2.clear();
-        for(int q=12;q<19;q++){
+        for(int q=12;q<20;q++){
             temp1.push_back(fore[q]);
         }
-        temp2=QByteArray::fromHex(temp1);//guzhangma
-        ConnectDevList[index]->faultcode=static_cast<short>((temp2[0]&0xFF)<<24|(temp2[1]&0xFF)<<16|(temp2[2]&0xFF)<<8|(temp2[3]&0xFF));
-        for(int q=19;q<26;q++){
-            temp1.push_back(fore[q]);
+        ConnectDevList[index]->faultcode=HexToDec(temp1).toShort();
+        if(ConnectDevList[index]->faultcode>11|ConnectDevList[index]->faultcode<0){
+            ConnectDevList[index]->fault=QString::number(ConnectDevList[index]->faultcode)+"error code";
+        }else{
+         ConnectDevList[index]->fault=GlobalObject::FalcutyCode[ConnectDevList[index]->faultcode];
         }
-        temp2=QByteArray::fromHex(temp1);
-        ConnectDevList[index]->fault=static_cast<short>((temp2[0]&0xFF)<<24|(temp2[1]&0xFF)<<16|(temp2[2]&0xFF)<<8|(temp2[3]&0xFF));
+
         temp1.clear();
-        temp2.clear();
-        for(int q=26;q<40;q++){
+        for(int q=28;q<32;q++){
             temp1.push_back(fore[q]);
         }
-        temp2=QByteArray::fromHex(temp1);//guzhangma
-        ConnectDevList[index]->voltage = static_cast<short>((temp2[0]&0xFF)<<8|(temp2[1]&0xFF));//dat[7];
-        ConnectDevList[index]->memory =static_cast<short>( (temp2[2]&0xFF)<<8|(temp2[3]&0xFF));
-        ConnectDevList[index]->workmode = temp2[4];
+        int v=HexToDec(temp1).toInt();
+        float vol=v/100.0f;
+         ConnectDevList[index]->voltage = vol;//dat[7];
+        temp1.clear();
+        for(int q=33;q<37;q++){
+            temp1.push_back(fore[q]);
+        }
+        ConnectDevList[index]->memory =HexToDec(temp1).toShort();
+        temp1.clear();
+        for(int q=37;q<38;q++){
+            temp1.push_back(fore[q]);
+        }
+        ConnectDevList[index]->workmode =HexToDec(temp1);
+
     }
-    if(back[1]=='9'&&back[2]=='0'){
+    if(back[0]=='0'&&back[1]=='9'){
         //0900 00 00   30 39   00   00 46   00 a8  光强2B+IR2B+iUV1B+距离2B+温度2B
         //        38 6d    e9 57   00   10 00 de f
         //qDebug()<<"SensorDataConvert"<<back<<"   size is  "<<back.length()<<"method 3";
         //09000090033e00002f0181
         //00 90    03 3e   00    00 2f    01 81
+        //0900 00d1 03b4 00 0000 024e
+        qDebug()<<"光强2B+IR2B+iUV1B+距离2B+温度2B";
         QByteArray  temp1,temp2;
         QString newbyte;
         //qDebug()<<"original "<<back;
         //qDebug()<<back[0]<<"  "<<back[1]<<" " <<back[2]<<" "<<back[3];
-        for(int q=4;q<22;q++){
-            temp1.push_back(back[q]);
+
+        ConnectDevList[index]->waitdata =false;
+       ConnectDevList[index]->dataIntgrality=true;
+        if(!ConnectDevList[index]->m_bCorrectValue){
+            for(int q=4;q<8;q++){
+                temp1.push_back(back[q]);
+            }
+            ConnectDevList[index]->datainfo.intensity = HexToDec(temp1).toShort();
+            temp1.clear();
+            for(int q=8;q<12;q++){
+                temp1.push_back(back[q]);
+            }
+            ConnectDevList[index]->datainfo.IR =HexToDec(temp1).toShort();
+            temp1.clear();
+            for(int q=12;q<14;q++){
+                temp1.push_back(back[q]);
+            }
+            ConnectDevList[index]->datainfo.iUV = HexToDec(temp1).toShort();
+            temp1.clear();
+            for(int q=14;q<18;q++){
+                temp1.push_back(back[q]);
+            }
+            ConnectDevList[index]->datainfo.distance = HexToDec(temp1).toShort();
+            temp1.clear();
+            for(int q=18;q<22;q++){
+                temp1.push_back(back[q]);
+            }
+            qDebug()<<temp1;
+            ConnectDevList[index]->datainfo.temperature =HexToDec(temp1).toFloat()*0.1f;
+            qDebug()<<"temo "<<ConnectDevList[index]->datainfo.temperature;
         }
-        temp2=QByteArray::fromHex(temp1);
-        //qDebug()<<"temp1 "<<temp1;
-        // qDebug()<<"temp2 "<<temp2;
+        if(ConnectDevList[index]->m_bCorrectValue){
+            ConnectDevList[index]->datainfo.IR +=static_cast<short>(ConnectDevList[index]->Corr_Coe.CorrIR);
+            ConnectDevList[index]->datainfo.iUV+=static_cast<short>(ConnectDevList[index]->Corr_Coe.CorrLight);
+            ConnectDevList[index]->datainfo.distance=ConnectDevList[index]->datainfo.distance*ConnectDevList[index]->datainfo.distance*ConnectDevList[index]->Corr_Coe.CorrDistanceA+ConnectDevList[index]->Corr_Coe.CorrDistanceB*ConnectDevList[index]->datainfo.distance+ConnectDevList[index]->Corr_Coe.CorrDistanceC;
+            float tempe=ConnectDevList[index]->datainfo.temperature;
+
+            ConnectDevList[index]->datainfo.temperature = tempe*tempe*ConnectDevList[index]->Corr_Coe.CorrTempA+tempe*ConnectDevList[index]->Corr_Coe.CorrTempB+ConnectDevList[index]->Corr_Coe.CorrTempC;
+        }
+
+    }
+    if(back[1]=='0'&&back[2]=='6'){
         ConnectDevList[index]->waitdata =false;
         ConnectDevList[index]->dataIntgrality=true;
-        if(ConnectDevList[index]->m_bCorrectValue){
-            ConnectDevList[index]->datainfo.intensity = static_cast<short>((temp2[0]&0xFF)<<8|(temp2[1]&0xFF));
-            ConnectDevList[index]->datainfo.IR =static_cast<short>( (temp2[2]&0xFF)<<8|(temp2[3]&0xFF))+static_cast<short>(ConnectDevList[index]->Corr_Coe.CorrIR);
-            ConnectDevList[index]->datainfo.iUV = temp2[4]+static_cast<short>(ConnectDevList[index]->Corr_Coe.CorrLight);
-
-            short temp= static_cast<short>((temp2[5]&0xFF)<<8|(temp2[6]&0xFF));
-            ConnectDevList[index]->datainfo.distance=temp*temp*ConnectDevList[index]->Corr_Coe.CorrDistanceA+ConnectDevList[index]->Corr_Coe.CorrDistanceB*temp+ConnectDevList[index]->Corr_Coe.CorrDistanceC;
-            float tempe=0.1f*static_cast<float>((temp2[7]&0xFF)<<8|(temp2[8]&0xFF));
-            ConnectDevList[index]->datainfo.temperature = tempe*tempe*ConnectDevList[index]->Corr_Coe.CorrTempA+tempe*ConnectDevList[index]->Corr_Coe.CorrTempB+ConnectDevList[index]->Corr_Coe.CorrTempC;
-            // qDebug()<<"temprature "<<ConnectDevList[index]->datainfo.temperature;
-        }else{
-            ConnectDevList[index]->datainfo.intensity = static_cast<short>((temp2[0]&0xFF)<<8|(temp2[1]&0xFF));
-            ConnectDevList[index]->datainfo.IR =static_cast<short>( (temp2[2]&0xFF)<<8|(temp2[3]&0xFF));
-            ConnectDevList[index]->datainfo.iUV = temp2[4];
-            ConnectDevList[index]->datainfo.distance = static_cast<short>((temp2[5]&0xFF)<<8|(temp2[6]&0xFF));
-            ConnectDevList[index]->datainfo.temperature = 0.1f*static_cast<float>((temp2[7]&0xFF)<<8|(temp2[8]&0xFF));
-            // qDebug()<<"temprature "<<ConnectDevList[index]->datainfo.temperature;
-        }
-
+        qDebug()<<"data process ignore "<<back;
     }
     ConnectDevList[index]->Method_exec();
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    if(fore[0]='1'&&fore[1]=='2'&&fore[2]=='c'){
-        //12c0 5a d9 47 26   00 4f   03 20   fd 72   00 13   00 00   ff d8   00 01
-        //时间4B+运动量2B+加速度x2B+加速度y2B+加速度z2B+倾角α2B+倾角β2B+倾角γ2B
-        QByteArray  temp1,temp2;
-        QString newbyte;
-        for(int q=4;q<12;q++){
-            temp1.push_back(fore[q]);
-        }
-        ConnectDevList[index]->time=HexTimeToDec(temp1);
-        temp1.clear();
-        temp2.clear();
-        QDateTime local(QDateTime::currentDateTime());
-        QString localTime = local.toString("yyyy-MM-dd:hh:mm:ss");
-        ui->ComputerTime_label->setText(localTime);
-        for(int q=12;q<40;q++){
-            temp1.push_back(fore[q]);
-        }
-        temp2=QByteArray::fromHex(temp1);
-
-        ConnectDevList[index]->waitdata=true;
-        ConnectDevList[index]->datainfo.motion = static_cast<short>((temp2[0]&0xFF)<<8|(temp2[1]&0xFF));
-        ConnectDevList[index]->datainfo.accelx = static_cast<short>((temp2[2]&0xFF)<<8|(temp2[3]&0xFF));
-        ConnectDevList[index]->datainfo.accely = static_cast<short>((temp2[4]&0xFF)<<8|(temp2[5]&0xFF));
-        ConnectDevList[index]->datainfo.accelz = static_cast<short>((temp2[6]&0xFF)<<8|(temp2[7]&0xFF));
-        ConnectDevList[index]->datainfo.tilt1 = static_cast<float>((temp2[8]&0xFF)<<8|(temp2[9]&0xFF))/1000;;
-        ConnectDevList[index]->datainfo.tilt2 = static_cast<float>((temp2[10]&0xFF)<<8|(temp2[11]&0xFF))/1000;
-        ConnectDevList[index]->datainfo.tilt3 = static_cast<float>((temp2[12]&0xFF)<<8|(temp2[13]&0xFF))/1000;;
-    }
-    else if(fore[0]='1'&&fore[1]=='1'&&fore[2]=='2'){
-        //1120 5a dd 98 7a   00 00 00 04   00 00   01 00   01 84   00 01   00(时间4B+故障码4B+故障4B+电压2B+可用内存2B+工作模式1B)
-        QByteArray  temp1,temp2;
-        QString newbyte;
-        for(int q=4;q<12;q++){
-            temp1.push_back(fore[q]);
-        }
-        //temp2=QByteArray::fromHex(temp1);//time
-
-        ConnectDevList[index]->time=HexTimeToDec(temp1);
-        // qDebug()<<"time2 is   "<<ConnectDevList[index];
-        temp1.clear();
-        temp2.clear();
-        for(int q=12;q<19;q++){
-            temp1.push_back(fore[q]);
-        }
-        temp2=QByteArray::fromHex(temp1);//guzhangma
-        ConnectDevList[index]->faultcode=static_cast<short>((temp2[0]&0xFF)<<24|(temp2[1]&0xFF)<<16|(temp2[2]&0xFF)<<8|(temp2[3]&0xFF));
-        for(int q=19;q<26;q++){
-            temp1.push_back(fore[q]);
-        }
-        temp2=QByteArray::fromHex(temp1);
-        ConnectDevList[index]->fault=static_cast<short>((temp2[0]&0xFF)<<24|(temp2[1]&0xFF)<<16|(temp2[2]&0xFF)<<8|(temp2[3]&0xFF));
-        temp1.clear();
-        temp2.clear();
-        for(int q=26;q<40;q++){
-            temp1.push_back(fore[q]);
-        }
-        temp2=QByteArray::fromHex(temp1);//guzhangma
-        ConnectDevList[index]->voltage = static_cast<short>((temp2[0]&0xFF)<<8|(temp2[1]&0xFF));//dat[7];
-        ConnectDevList[index]->memory =static_cast<short>( (temp2[2]&0xFF)<<8|(temp2[3]&0xFF));
-        ConnectDevList[index]->workmode = temp2[4];
-    }
-    if(back[1]=='9'&&back[2]=='0'){
-        //0900 00 00   30 39   00   00 46   00 a8  光强2B+IR2B+iUV1B+距离2B+温度2B
-        //        38 6d    e9 57   00   10 00 de f
-        //qDebug()<<"SensorDataConvert"<<back<<"   size is  "<<back.length()<<"method 3";
-        //09000090033e00002f0181
-        //00 90    03 3e   00    00 2f    01 81
-        QByteArray  temp1,temp2;
-        QString newbyte;
-        //qDebug()<<"original "<<back;
-        //qDebug()<<back[0]<<"  "<<back[1]<<" " <<back[2]<<" "<<back[3];
-        for(int q=4;q<22;q++){
-            temp1.push_back(back[q]);
-        }
-        temp2=QByteArray::fromHex(temp1);
-        //qDebug()<<"temp1 "<<temp1;
-        // qDebug()<<"temp2 "<<temp2;
-        ConnectDevList[index]->waitdata =false;
-        ConnectDevList[index]->datainfo.intensity = static_cast<short>((temp2[0]&0xFF)<<8|(temp2[1]&0xFF));
-        ConnectDevList[index]->datainfo.IR =static_cast<short>( (temp2[2]&0xFF)<<8|(temp2[3]&0xFF));
-        ConnectDevList[index]->datainfo.iUV = temp2[4];
-        ConnectDevList[index]->datainfo.distance = static_cast<short>((temp2[5]&0xFF)<<8|(temp2[6]&0xFF));
-        ConnectDevList[index]->datainfo.temperature = 0.1f*static_cast<float>((temp2[7]&0xFF)<<8|(temp2[8]&0xFF));
-        // qDebug()<<"temprature "<<ConnectDevList[index]->datainfo.temperature;
-        if(m_bDatabaseAcvated){
-            bool r=insert(ConnectDevList[index]);
-        }
-    }
-    if(ConnectDevList[index]->waitdata==false&&m_bCsv){
-        //写入数据
-        // qDebug()<<"bind";
-        if(ConnectDevList[index]->mac==Csv[index]->GetBindMac()){
-            FileOutput(ConnectDevList[index]->mac,ConnectDevList[index]->mac,1,ConnectDevList[index],Csv[index]);
-        }
-        else{
-            for(int i=0;i<18;i++){
-                if(ConnectDevList[index]->mac==Csv[i]->GetBindMac()){
-                    FileOutput(ConnectDevList[index]->mac,ConnectDevList[index]->mac,1,ConnectDevList[index],Csv[i]);
-                }
-            }
-        }
-    }
 
     ShowDataOnTable();
 }
 void MainWidget::InqueryProc(QStringList &strList,int px=0){
-    //"A80C6348591C", "honor Band 3-91c", "020a041109686f6e6f722042616e6420332d393163", "-87"
-    if(strList[0].length()==12){
+    //" INQRESULT; A80C6348591C; 0; name; 0; 031900000201060302121808ff7d020103002082; -74;"
+    if(strList[1].length()==12&&strList[3]!=""){
         for(int  q=0;q<BlockList.length();q++){
             if(strList[0]==BlockList[q]){
                 return;
             }
         }
-        bool find=false;//查询是否在搜索列表里面
+        bool find=false;//check is it in the scanlist
         for(int q=0;q<ScanDevList.length();q++){
-            if(ScanDevList[q]->mac==strList[0]){
+            if(ScanDevList[q]->mac==strList[1]){
                 find=true;
                 break;
             }
         }
 
         if(!find){
-            if(strList[0].length()==12){
+            if(strList[1].length()==12){
                 ScanListItem *SLI=new ScanListItem;
-                SLI->mac=strList[0];
-                SLI->name=strList[1];
+                SLI->mac=strList[1];
+                SLI->name=strList[3];
                 if(px==0){
-                    SLI->devPortnum=GlobeObject::port_;
+                    SLI->devPortnum=GlobalObject::port_;
                 }
                 else{
-                    SLI->devPortnum=GlobeObject::port_2;
+                    SLI->devPortnum=GlobalObject::port_2;
                 }
                 SLI->rssi=static_cast<signed char>(strList[strList.size()-1].toInt());
                 SLI->addrtype=static_cast<signed char>(1);
@@ -1088,14 +1024,14 @@ void MainWidget::InqueryProc(QStringList &strList,int px=0){
         }
         //配置文件中保存的列表 直接连接
         for(int q=0;q<DeviceList_Config.length();q+=2){
-            if(DeviceList_Config[q]->mac==strList[0]){
+            if(DeviceList_Config[q]->mac==strList[1]){
                 //直接连接
-                signed char ty=static_cast<signed char>(strList[1].toInt());
+                signed char ty=static_cast<signed char>(strList[2].toInt());
                 if(px==0){
-                    ConnectActionTrigged(DeviceList_Config[q]->mac,GlobeObject::port_,ty);
+                    ConnectActionTrigged(DeviceList_Config[q]->mac,GlobalObject::port_,ty);
                 }
                 else{
-                    ConnectActionTrigged(DeviceList_Config[q]->mac,GlobeObject::port_2,ty);
+                    ConnectActionTrigged(DeviceList_Config[q]->mac,GlobalObject::port_2,ty);
                 }
 
             }
@@ -1103,18 +1039,25 @@ void MainWidget::InqueryProc(QStringList &strList,int px=0){
     }
 }
 void MainWidget::NotifyProc(QStringList &strList,int px=0){
+    //NOTIFY;E5AEFA129DDC;fff1;12c0387042af000e0090ffcc04960045ffe70339;;
+
+    // "NOTIFY,C4CC019C6A79,fff1,06b0386cd8410000,"//这是什么情况
+    //"NOTIFY", "E5AEFA129DDC", "fff1", "1120387060c8000000100000001101a3000101", ""
     qDebug()<<"notify str list "<<strList;
+    if(strList.length()<3){
+        return;
+    }
     if(ConnectDevList.length()==0){
         if(px==0){
-            DisconnetDeviceTrigged(strList[0],GlobeObject::port_);
+            DisconnetDeviceTrigged(strList[1],GlobalObject::port_);
         }
         else{
-            DisconnetDeviceTrigged(strList[0],GlobeObject::port_2);
+            DisconnetDeviceTrigged(strList[1],GlobalObject::port_2);
         }
 
     }
     for(int q=0;q<ConnectDevList.length();q++){
-        if(ConnectDevList[q]->mac==strList[0]&&ConnectDevList[q]->name==""){
+        if(ConnectDevList[q]->mac==strList[1]&&ConnectDevList[q]->name==""){
             ConnectDevList.removeAt(q);
             AddDevicetoConnectedTree();
             AddDeviceToNewDeviceTree();
@@ -1122,21 +1065,26 @@ void MainWidget::NotifyProc(QStringList &strList,int px=0){
         }
     }
 
-    if(strList[2].length()==40){
-        DataInfo_forepart=strList[2].toLatin1();
+    if(strList[3].length()==40){
+        DataInfo_forepart=strList[3].toLatin1();
+    }
+    else if(strList[3].length()==22){
+        DataInfo_backend=strList[3].toLatin1();
+    }
+    else if(strList[3].length()==38){
+        DataInfo_forepart=strList[3].toLatin1();
+    }
+    else if(strList[3].length()==16){
+
+        DataInfo_backend=strList[3].toLatin1();
+
     }
     else{
-        DataInfo_backend=strList[2].toLatin1();
+        qDebug()<<"unknow data   "<<strList[3];
     }
 
     //传电压过来的时候是这样的
-    //info  "\r\n+NOTIFY:E5AEFA129DDC,fff1,1120386f4fcd000000000000000001a3000101\r\n\r\n+NOTIFY:E5AEFA129DDC,fff1,06b0386f4fcd0000\r\n"
-    //notify str list  ("E5AEFA129DDC", "fff1", "1120386f4fcd000000000000000001a3000101E5AEFA129DDC", "fff1", "06b0386f4fcd0000")
-    if(strList.length()>3){
-        DataInfo_forepart=strList[2].toLatin1();
-        DataInfo_backend=strList[4].toLatin1();
-    }
-
+    //"NOTIFY", "E5AEFA129DDC", "fff1", "1120387060c8000000100000001101a3000101", ""
     if(multiThread){
         if(false){
             qDebug()<<"isBusy"<<Data_Thread->isBusy();
@@ -1154,7 +1102,7 @@ void MainWidget::NotifyProc(QStringList &strList,int px=0){
             bool find=false;
             newdevice->datainfo=newdevice->datainfo;
             for(int i=0;i<ConnectDevList.length();i++){
-                if(strList[0]==ConnectDevList[i]->mac){
+                if(strList[1]==ConnectDevList[i]->mac){
                     find=true;
                     index=i;
                     break;
@@ -1166,8 +1114,8 @@ void MainWidget::NotifyProc(QStringList &strList,int px=0){
             }
             if(!find){
                 qDebug()<<"not find";//这个情况不应该出现的
-                if(strList[0].length()==12){
-                    newdevice->mac=strList[0];
+                if(strList[1].length()==12){
+                    newdevice->mac=strList[1];
                     index=ConnectDevList.length();
                     ConnectDevList.push_back(newdevice);
                     AddDevicetoConnectedTree();
@@ -1189,23 +1137,30 @@ void MainWidget::NotifyProc(QStringList &strList,int px=0){
 
     }
     else{
-        SensorDataConvert(DataInfo_forepart,DataInfo_backend,strList[0]);
+        SensorDataConvert(DataInfo_forepart,DataInfo_backend,strList[1]);
     }
 
 
-    if(px==0){
-        GetSingleSensorRSSI(strList[0],GlobeObject::port_);
+
+    /*  if(px==0){
+        SysinfoofDevice(strList[1],GlobalObject::port_);//"ETH0IP", "192.168.199.190", "ETH0MAC", "00-1b-35-13-be-a0", "WLAN0IP", "192.168.199.238", "WLAN0MAC", "50-2b-73-d1-c3-91", "LOCALBTCOUNT", "4", ""
     }
     else{
-        GetSingleSensorRSSI(strList[0],GlobeObject::port_2);
-    }
-    if(px==0){
+       SysinfoofDevice(strList[1],GlobalObject::port_2);
+    }*/
 
+    /* if(px*==0){
+           ReadDevice(strList[1],GlobalObject::port_);//("READCHAR", "E5AEFA129DDC", "fff2", "012001")  并且这个发送了就不会发送数据，只发送readchar;
     }
     else{
-        GetSingleSensorRSSI(strList[0],GlobeObject::port_2);
+        ReadDevice(strList[1],GlobalObject::port_2);
     }
-
+    if(px==0){
+       CharacteristicofDevice(strList[1],GlobalObject::port_);//会
+    }
+    else{
+      CharacteristicofDevice(strList[1],GlobalObject::port_2);
+    }*/
 
 
 }
@@ -1232,14 +1187,16 @@ void MainWidget::ReceiveFromthread(DeviceInfo *Dinfo, int index){
 }
 void MainWidget::CharacteristicProc(QStringList &strList,int px=0){
     //将设备加入列表
+    //"CHARACTERISTIC;E5AEFA129DDC;fff0;fff1;10; ;"
+    qDebug()<<"char  "<<strList;
     bool find=false;
     for(int q=0;q<ConnectDevList.length();q++){
-        if(strList[0]==ConnectDevList[q]->mac){
+        if(strList[1]==ConnectDevList[q]->mac){
             find=true;
             ConnectDevList[q]->state=CONNECTED;
             if(ConnectDevList[q]->name==""){
                 for(int m=0;m<ScanDevList.size();m++){
-                    if(ScanDevList[m]->mac==strList[0]){
+                    if(ScanDevList[m]->mac==strList[1]){
                         ConnectDevList[q]->name=ScanDevList[q]->name;
                         ConnectDevList[q]->rssi=ScanDevList[q]->rssi;
                         ConnectDevList[q]->addrtype=ScanDevList[q]->addrtype;
@@ -1257,15 +1214,15 @@ void MainWidget::CharacteristicProc(QStringList &strList,int px=0){
     }
     if(!find){
         //正常情况下是到这里
-        if(strList[0].length()!=12){
+        if(strList[1].length()!=12){
             return;
         }
         DeviceInfo *newde=new DeviceInfo;
-        newde->mac=strList[0];
+        newde->mac=strList[1];
         int p=-1;
         bool find=false;
         for(int q=0;q<ScanDevList.size();q++){
-            if(ScanDevList[q]->mac==strList[0]){
+            if(ScanDevList[q]->mac==strList[1]){
                 p=q;
                 newde->name=ScanDevList[q]->name;
                 newde->rssi=ScanDevList[q]->rssi;
@@ -1281,15 +1238,15 @@ void MainWidget::CharacteristicProc(QStringList &strList,int px=0){
         //检查是否在DeviceList_Config中
         bool fid=false;
         for(int m=0;m<DeviceList_Config.length();m++){
-            if(DeviceList_Config[m]->mac==strList[0]){
+            if(DeviceList_Config[m]->mac==strList[1]){
                 fid=true;
                 qDebug()<<"connection from config ";
                 ConnectDevList.push_back(DeviceList_Config[m]);
                 if(px==0){
-                    ConnectDevList.last()->devPortnum=GlobeObject::port_;
+                    ConnectDevList.last()->devPortnum=GlobalObject::port_;
                 }
                 else{
-                    ConnectDevList.last()->devPortnum=GlobeObject::port_2;
+                    ConnectDevList.last()->devPortnum=GlobalObject::port_2;
                 }
 
                 delete newde;
@@ -1302,7 +1259,7 @@ void MainWidget::CharacteristicProc(QStringList &strList,int px=0){
         }
 
         ConnectDevList.last()->state=CONNECTED;
-        PromptInfomation("连接"+strList[0]+"成功");
+        PromptInfomation("连接"+strList[1]+"成功");
         if(m_bCsv){
             if(ConnectDevList.length()>0){
                 if(Csv[ConnectDevList.length()-1]==nullptr){
@@ -1311,10 +1268,10 @@ void MainWidget::CharacteristicProc(QStringList &strList,int px=0){
             }
         }
         if(px==0){
-            ReadSingelDeviceData(strList[0],GlobeObject::port_);//这个发送了才会开始广播数据
+            ReadSingelDeviceData(strList[1],GlobalObject::port_);//这个发送了才会开始发送数据
         }
         else{
-            ReadSingelDeviceData(strList[0],GlobeObject::port_2);
+            ReadSingelDeviceData(strList[1],GlobalObject::port_2);
         }
 
     }
@@ -1325,12 +1282,13 @@ void MainWidget::CharacteristicProc(QStringList &strList,int px=0){
 }
 void MainWidget::DiscProc(QStringList &info){
     //剩下就是mac了
-    PromptInfomation("断开连接"+info[0]);
+    //DISC,E5AEFA129DDC,
+    PromptInfomation("断开连接"+info[1]);
     for(int i=0;i<ConnectDevList.length();i++){
-        qDebug()<<ConnectDevList[i]->mac<<"  "<<info[0];
-        if(ConnectDevList[i]->mac==info[0]){
+        qDebug()<<ConnectDevList[i]->mac<<"  "<<info[1];
+        if(ConnectDevList[i]->mac==info[1]){
             ConnectDevList.removeAt(i);
-            qDebug()<<"remove  "<<info[0];
+            qDebug()<<"remove  "<<info[1];
             if(FocusIndex==i){
                 if(FocusIndex=-1);
             }
@@ -1343,7 +1301,7 @@ void MainWidget::DiscProc(QStringList &info){
     if(m_bCsv){
         for(int i=0;i<18;i++){
             if(Csv[i]!=nullptr){
-                if(Csv[i]->GetBindMac()==info[0]){
+                if(Csv[i]->GetBindMac()==info[1]){
                     delete Csv[i];
                     Csv[i]=nullptr;
                 }
@@ -1367,30 +1325,43 @@ void MainWidget::ReadDevice(QString mac,quint16 po=0){
     if(mac.length()==12)
     {
         QString str="AT+READCHAR="+mac+","+gRxChar+"\r\n";
-        if(m_bTcp_1_con&&po==GlobeObject::port_){
-            GlobeObject::Socket_->write(str.toLatin1(),str.length());
+        if(m_bTcp_1_con&&po==GlobalObject::port_){
+            GlobalObject::Socket_->write(str.toLatin1(),str.length());
         }
-        else if(m_bTcp_2_con&&po==GlobeObject::port_2){
-            GlobeObject::Socket_2->write(str.toLatin1(),str.length());
+        else if(m_bTcp_2_con&&po==GlobalObject::port_2){
+            GlobalObject::Socket_2->write(str.toLatin1(),str.length());
+        }
+
+
+    }
+}
+void MainWidget::CharacteristicofDevice(QString mac, quint16 po){
+    if(mac.length()==12)
+    {
+        QString str="AT+CHAR="+mac+"\r\n";
+        if(m_bTcp_1_con&&po==GlobalObject::port_){
+            GlobalObject::Socket_->write(str.toLatin1(),str.length());
+        }
+        else if(m_bTcp_2_con&&po==GlobalObject::port_2){
+            GlobalObject::Socket_2->write(str.toLatin1(),str.length());
         }
 
 
     }
 }
 void MainWidget::OtherDeviceMenu(const QPoint& pos){
-    //如何检查pos位置
     qDebug()<<pos;
-    QModelIndex curIndex =ui->OtherDevicetree_Wiew->indexAt(pos);//索引值
+    QModelIndex curIndex =ui->OtherDevicetree_Wiew->indexAt(pos);
     qDebug()<<curIndex;
     QModelIndex index = curIndex.sibling(curIndex.row(),0);
-    //获取点击设备的mac
+    //get mac
     QString IndexMac=index.data().toString();
     qDebug()<<IndexMac;
     if(IndexMac.length()!=12){
         qDebug()<<"mac is not 12 long";
         return;
     }
-    //获取type
+    //get type
     signed char ty;
     quint16 Portnum=0;
     for(int q=0;q<ScanDevList.length();q++){
@@ -1484,24 +1455,42 @@ void MainWidget::PushRenametoList(QString Name, QString Mac){
 void MainWidget::ConnectActionTrigged(QString Mac,quint16 port,signed char ty){
     //qDebug()<<"trigged!";
     // qDebug()<<Mac<<" "<<ty;
-    qDebug()<<"port   "<<port;
-    qDebug()<<"port 1 "<<GlobeObject::port_<<"port 2 "<<GlobeObject::port_2;
+
     if(Mac.length()==12)
     {
         // index = GetSensorIndex(addr);
         //此处要获取设备信息，确定设备类型
         QString strMsg="AT+CONN="+Mac+","+QString::number(ty)+"\r\n";//0表示没链接吗
         // qDebug()<<strMsg;
-        if(port==GlobeObject::port_&&m_bTcp_1_con){
-            GlobeObject::Socket_->write(strMsg.toLatin1(),strMsg.length());//
+        if(port==GlobalObject::port_&&m_bTcp_1_con){
+            GlobalObject::Socket_->write(strMsg.toLatin1(),strMsg.length());//
             GetSingleSensorRSSI(Mac,port);
         }
-        if(port==GlobeObject::port_2&&m_bTcp_2_con){
-            GlobeObject::Socket_2->write(strMsg.toLatin1(),strMsg.length());//
+        if(port==GlobalObject::port_2&&m_bTcp_2_con){
+            GlobalObject::Socket_2->write(strMsg.toLatin1(),strMsg.length());//
             GetSingleSensorRSSI(Mac,port);
         }
         PromptInfomation("正在连接"+Mac);
     }
+}
+void MainWidget::SysinfoofDevice(QString Mac, quint16 po=0){
+    if(Mac.length()==12)
+    {
+        QString strMsg="AT+SYSINFO?\r\n";
+        // qDebug()<<"本机发送断开请求"<<strMsg;
+        if(po==GlobalObject::port_&&m_bTcp_1_con){
+            GlobalObject::Socket_->write(strMsg.toLatin1(),strMsg.length());//
+        }
+        else if(m_bTcp_2_con){
+            GlobalObject::Socket_2->write(strMsg.toLatin1(),strMsg.length());//
+        }
+
+
+    }
+    else{
+        qDebug()<<"mac is not 12 bit";
+    }
+
 }
 void MainWidget::DisconnetDeviceTrigged(QString Mac,quint16 p=0){
     // qDebug()<<"dis connecte";
@@ -1509,11 +1498,11 @@ void MainWidget::DisconnetDeviceTrigged(QString Mac,quint16 p=0){
     {
         QString strMsg="AT+DISC="+Mac+"\r\n";
         qDebug()<<"本机发送断开请求"<<strMsg;
-        if(p==GlobeObject::port_&&m_bTcp_1_con){
-            GlobeObject::Socket_->write(strMsg.toLatin1(),strMsg.length());//
+        if(p==GlobalObject::port_&&m_bTcp_1_con){
+            GlobalObject::Socket_->write(strMsg.toLatin1(),strMsg.length());//
         }
         else if(m_bTcp_2_con){
-            GlobeObject::Socket_2->write(strMsg.toLatin1(),strMsg.length());//
+            GlobalObject::Socket_2->write(strMsg.toLatin1(),strMsg.length());//
         }
 
 
@@ -1526,6 +1515,29 @@ void MainWidget::DisconnetDeviceTrigged(QString Mac,quint16 p=0){
 }
 void MainWidget::UI_initial(){
 
+}
+void MainWidget::CirculationTask(int t){
+    qDebug()<<"circulationtask  "<<t;
+    switch (t) {
+    case 0:
+
+        for(int i=0;i<ConnectDevList.length();i++){
+            if(m_bTcp_1_con){
+                if(ConnectDevList[i]->devPortnum==GlobalObject::port_){
+                    GetSingleSensorRSSI(ConnectDevList[i]->mac,GlobalObject::port_);
+                    ReadSingelDeviceData(ConnectDevList[i]->mac,GlobalObject::port_);
+                }
+            }
+            if(m_bTcp_2_con){
+                if(ConnectDevList[i]->devPortnum==GlobalObject::port_2){
+                    GetSingleSensorRSSI(ConnectDevList[i]->mac,GlobalObject::port_2);
+                    ReadSingelDeviceData(ConnectDevList[i]->mac,GlobalObject::port_2);
+                }
+            }
+        }
+
+        break;
+    }
 }
 void MainWidget::TimerTimerOut(){
     qDebug()<<"timer time out";
@@ -1559,13 +1571,13 @@ void MainWidget::AddDevicetoConnectedTree(){
         model_Con = new QStandardItemModel(ui->ConnectedDevice_treeView);
         model_Con->setHorizontalHeaderLabels(QStringList()<<QStringLiteral("MAC")<<QStringLiteral("name"));
 
-        if(GlobeObject::port_!=0&&m_bTcp_1_con){
-            QStandardItem* item_port_1 = new QStandardItem(QString::number(GlobeObject::port_));
+        if(GlobalObject::port_!=0&&m_bTcp_1_con){
+            QStandardItem* item_port_1 = new QStandardItem(QString::number(GlobalObject::port_));
             model_Con->appendRow(item_port_1);
             item_port_1->setEditable(false);
 
             for(int i=0;i<ConnectDevList.size();i++){
-                if(ConnectDevList[i]->devPortnum==GlobeObject::port_){
+                if(ConnectDevList[i]->devPortnum==GlobalObject::port_){
                     QStandardItem* itemchannel = new QStandardItem(ConnectDevList[i]->mac);
                     item_port_1->appendRow(itemchannel);
                     if(ConnectDevList[i]->newname==""){
@@ -1580,11 +1592,11 @@ void MainWidget::AddDevicetoConnectedTree(){
 
             }
         }
-        if(GlobeObject::port_2!=0&&m_bTcp_2_con){
-            QStandardItem* item_port_2 = new QStandardItem(QString::number(GlobeObject::port_2));
+        if(GlobalObject::port_2!=0&&m_bTcp_2_con){
+            QStandardItem* item_port_2 = new QStandardItem(QString::number(GlobalObject::port_2));
             model_Con->appendRow(item_port_2);
             for(int i=0;i<ConnectDevList.size();i++){
-                if(ConnectDevList[i]->devPortnum==GlobeObject::port_2){
+                if(ConnectDevList[i]->devPortnum==GlobalObject::port_2){
                     QStandardItem* itemchannel = new QStandardItem(ConnectDevList[i]->mac);
                     item_port_2->appendRow(itemchannel);
                     if(ConnectDevList[i]->newname==""){
@@ -1611,7 +1623,7 @@ void MainWidget::AddDevicetoConnectedTree(){
 }
 
 void MainWidget::AddDeviceToNewDeviceTree(){
-    //扫描设备并添加到未连接列表
+    //scan and add the device to  ScanDevList
     if(ScanDevList.size()>=0){
 
         if(model_Scan!=nullptr){
@@ -1654,7 +1666,7 @@ void MainWidget::BtnDeviceScan(){
 }
 void MainWidget::ItemBeClicked(const QModelIndex &index){
     QModelIndex info = index.sibling(index.row(),0);
-    //获取点击设备的mac
+    //get mac
     QString IndexMac=info.data().toString();
     qDebug()<<IndexMac.length()<<index;
     if(IndexMac.length()!=12){
@@ -1681,6 +1693,10 @@ void MainWidget::ItemBeClicked(const QModelIndex &index){
         DataBuff_Tilt1.clear();
         DataBuff_Tilt2.clear();
         DataBuff_Tilt3.clear();
+        DataBuff_IUV.clear();
+        DataBuff_AccX.clear();
+        DataBuff_Motion.clear();
+        DataBuff_Distance.clear();
         DrawCount=0;
     }
 }
@@ -1713,12 +1729,12 @@ void MainWidget::InquireDev(unsigned char action,unsigned char mod,unsigned char
         qDebug()<<cmdstr<<"inquire send";
         size_t len=strlen(cmdstr);
         qDebug()<<"port1 ";
-        if(GlobeObject::port_!=0&&m_bTcp_1_con){
-            GlobeObject::Socket_->write(cmdstr,static_cast<int>(len));
+        if(GlobalObject::port_!=0&&m_bTcp_1_con){
+            GlobalObject::Socket_->write(cmdstr,static_cast<int>(len));
         }
         qDebug()<<"port2 ";
-        if(GlobeObject::port_2!=0&&m_bTcp_2_con){
-            GlobeObject::Socket_2->write(cmdstr,static_cast<int>(len));
+        if(GlobalObject::port_2!=0&&m_bTcp_2_con){
+            GlobalObject::Socket_2->write(cmdstr,static_cast<int>(len));
         }
 
         if(action == 1)
@@ -1745,7 +1761,7 @@ bool MainWidget::BdaddrIsZero(QString addr)
 }
 void MainWidget::on_SerialPortConfig_pushButton_clicked()
 {
-    SerialPortDialog *spd=new SerialPortDialog(GlobeObject::serial,this);
+    SerialPortDialog *spd=new SerialPortDialog(GlobalObject::serial,this);
     connect(spd,&SerialPortDialog::serialOpened,this,&MainWidget::SerailState);
     spd->show();
 }
@@ -1844,7 +1860,7 @@ void MainWidget::DataParser(QByteArray data){
 void MainWidget::ReadSingelDeviceData(QString Mac,quint16 po){
     if(Mac.length()==12)
     {
-        if(po==GlobeObject::port_){
+        if(po==GlobalObject::port_){
             SendDatatoDev(Mac,gRxChar,"012001",0);
         }
         else{
@@ -1857,12 +1873,12 @@ void MainWidget::GetSingleSensorRSSI(QString Mac,quint16 po=0){
     if(Mac.length()==12)
     {
         QString inqRssi="AT+RSSI="+Mac+"\r\n";
-        if(po==GlobeObject::port_&&m_bTcp_1_con){
+        if(po==GlobalObject::port_&&m_bTcp_1_con){
 
-            GlobeObject::Socket_->write(inqRssi.toLatin1(),inqRssi.length());
+            GlobalObject::Socket_->write(inqRssi.toLatin1(),inqRssi.length());
         }
         else if(m_bTcp_2_con){
-            GlobeObject::Socket_2->write(inqRssi.toLatin1(),inqRssi.length());
+            GlobalObject::Socket_2->write(inqRssi.toLatin1(),inqRssi.length());
         }
     }
 }
@@ -1872,10 +1888,10 @@ void MainWidget::SendDatatoDev(QString Mac,QString charc,QString dat,int po=0){
 
         QString sendData="AT+WRITECHAR="+Mac+","+charc+","+dat+"\r\n";
         if(po==0&&m_bTcp_1_con){
-            GlobeObject::Socket_->write(sendData.toLatin1(),sendData.length());
+            GlobalObject::Socket_->write(sendData.toLatin1(),sendData.length());
         }
         else if(m_bTcp_2_con){
-            GlobeObject::Socket_2->write(sendData.toLatin1(),sendData.length());
+            GlobalObject::Socket_2->write(sendData.toLatin1(),sendData.length());
         }
 
     }
@@ -1921,7 +1937,7 @@ void MainWidget::ShowDataOnTable(DeviceInfo df){
     ui->FaultCode_label->setText(QString::number(df.faultcode));
     ui->DeviceName_label->setText(df.name);
     ui->IR_label->setText(QString::number(df.datainfo.IR));
-    ui->Fault_label->setText(QString::number(df.fault));
+    ui->Fault_label->setText(df.fault);
     ui->Movement_label->setText(QString::number(df.datainfo.motion));
 }
 void MainWidget::ShowDataOnTable(){
@@ -1960,22 +1976,27 @@ void MainWidget::ShowDataOnTable(){
     }
 
     ui->IR_label->setText(QString::number(ConnectDevList[FocusIndex]->datainfo.IR));
-    ui->Fault_label->setText(QString::number(ConnectDevList[FocusIndex]->fault));
+    ui->Fault_label->setText(ConnectDevList[FocusIndex]->fault);
     ui->Movement_label->setText(QString::number(ConnectDevList[FocusIndex]->datainfo.motion));
     ui->IUV_label->setText(QString::number(ConnectDevList[FocusIndex]->datainfo.iUV));
     ui->Distance_label->setText(QString::number(ConnectDevList[FocusIndex]->datainfo.distance));
     ui->DeviceSignal_label->setText(QString::number(ConnectDevList[FocusIndex]->rssi));
+    ui->Light_label->setText(QString::number(ConnectDevList[FocusIndex]->datainfo.intensity));
 
 
     if(m_bShowOnCharts){
         DrawCount++;
-        if(DrawCount>=DrawMaxCount){
+        if(DrawCount>=DrawMaxCount+1){
             DataBuff_AccX.pop_front();
             DataBuff_AccY.pop_front();
             DataBuff_AccZ.pop_front();
             DataBuff_Tilt1.pop_front();
             DataBuff_Tilt2.pop_front();
             DataBuff_Tilt3.pop_front();
+            DataBuff_Distance.pop_front();
+            DataBuff_Motion.pop_front();
+            DataBuff_IR.pop_front();
+            DataBuff_IUV.pop_front();
             //qDebug()<<"Draw Count   "<<DrawCount;
         }
         DataBuff_AccX.push_back(ConnectDevList[FocusIndex]->datainfo.accelx);
@@ -1984,6 +2005,13 @@ void MainWidget::ShowDataOnTable(){
         DataBuff_Tilt1.push_back(ConnectDevList[FocusIndex]->datainfo.tilt1);
         DataBuff_Tilt2.push_back(ConnectDevList[FocusIndex]->datainfo.tilt2);
         DataBuff_Tilt3.push_back(ConnectDevList[FocusIndex]->datainfo.tilt3);
+
+        DataBuff_Distance.push_back(ConnectDevList[FocusIndex]->datainfo.distance);
+        DataBuff_Motion.push_back(ConnectDevList[FocusIndex]->datainfo.motion);
+        DataBuff_IR.push_back(ConnectDevList[FocusIndex]->datainfo.IR);
+        DataBuff_IUV.push_back(ConnectDevList[FocusIndex]->datainfo.iUV);
+
+
     }
     ChartDrawer();
 }
@@ -1991,6 +2019,39 @@ void MainWidget::on_DataConfig_pushButton_clicked()
 {
     DataConDialog=new DataConfigDialog(&ConnectDevList,this);
     DataConDialog->show();
+}
+int MainWidget::SignalHexToDec(QString t){
+    int sec=0;
+    int len=t.length();
+    for(int q=1;q<len;q++){
+        switch (t[q].toLatin1()) {
+        case 'a':
+            sec+=10*pow(16,t.length()-q-2);
+            break;
+        case 'b':
+            sec+=11*pow(16,t.length()-q-2);
+            break;
+        case 'c':
+            sec+=12*pow(16,t.length()-q-2);
+            break;
+        case 'd':
+            sec+=13*pow(16,t.length()-q-2);
+            break;
+        case 'e':
+            sec+=14*pow(16,t.length()-q-2);
+            break;
+        case 'f':
+            sec+=15*pow(16,t.length()-q-2);
+            break;
+        default:
+            sec+=(static_cast<int>(t[q].toLatin1())-48)*pow(16,t.length()-q-2);
+            break;
+        }
+    }
+
+    return -sec;
+
+
 }
 unsigned int MainWidget::HexToDec(QString t){
     unsigned int sec=0;
@@ -2069,7 +2130,12 @@ void MainWidget::on_Synchronization_pushButton_clicked()
                     .arg(timebuf[1]).arg(timebuf[2])
                     .arg(timebuf[3]);
             SendDatatoDev(ConnectDevList[i]->mac,gRxChar,meg);
+
+            //QString infoDevi="012001";
+            ReadSingelDeviceData(ConnectDevList[i]->mac,ConnectDevList[i]->devPortnum);
+
         }
+
     }
 
 }
@@ -2099,21 +2165,53 @@ void MainWidget::ChartDrawer(){
     if(series[5]==nullptr){
         series[5]=new QLineSeries;
     }
+    if(Distancechart==nullptr){
+        Distancechart=new QChart;
+        Distancechart->setMargins(QMargins(0,0,0,0));
+    }
+    if(IRchart==nullptr){
+        IRchart=new QChart;
+        IRchart->setMargins(QMargins(0,0,0,0));
+    }
+    if(IUVchart==nullptr){
+        IUVchart=new QChart;
+        IUVchart->setMargins(QMargins(0,0,0,0));
+    }
+    if(Motionchart==nullptr){
+        Motionchart=new QChart;
 
+    }
+    if(Distanceseries==nullptr){
+        Distanceseries=new QLineSeries;
+    }
+    if(IRseries==nullptr){
+        IRseries=new QLineSeries;
+    }
+    if(IUVseries==nullptr){
+        IUVseries=new QLineSeries;
+    }
+    if(Motionseries==nullptr){
+        Motionseries=new QLineSeries;
+    }
+    qDebug()<<"add series ";
     chart[0]->addSeries(series[0]);
     chart[0]->addSeries(series[1]);
     chart[0]->addSeries(series[2]);
+    Distancechart->addSeries(Distanceseries);
+    IRchart->addSeries(IRseries);
+    IUVchart->addSeries(IUVseries);
+    Motionchart->addSeries(Motionseries);
+    chart[1]->addSeries(series[3]);
+    chart[1]->addSeries(series[4]);
+    chart[1]->addSeries(series[5]);
     chart[0]->createDefaultAxes();
     chart[0]->axisX()->setRange(0,20);
     chart[0]->axisY()->setRange(-1200,1200);
     chart[0]->setMargins(QMargins(0,0,0,0));//铺满
     //chart[0]->setAnimationOptions(QChart::SeriesAnimations);  //开启会使绘制变成动画效果，但是不适合移动窗口
-    chart[1]->addSeries(series[3]);
-    chart[1]->addSeries(series[4]);
-    chart[1]->addSeries(series[5]);
     chart[1]->createDefaultAxes();
     chart[1]->axisX()->setRange(0,20);
-    chart[1]->axisY()->setRange(-1.2,1.2);
+    chart[1]->axisY()->setRange(-1200,1200);
     chart[1]->setMargins(QMargins(0,0,0,0));//铺满
     // chart[1]->setAnimationOptions(QChart::SeriesAnimations);  //在缩放窗口大小时可以用动画进行美化
 
@@ -2127,11 +2225,10 @@ void MainWidget::ChartDrawer(){
     series[3]->setColor(Qt::red);
     series[4]->setColor(Qt::blue);
     series[5]->setColor(Qt::green);
-
-
-
-    // QTime current_time =QTime::currentTime();
-    // int second = current_time.second();
+    Distanceseries->setColor(Qt::red);
+    IRseries->setColor(Qt::red);
+    IUVseries->setColor(Qt::red);
+    Motionseries->setColor(Qt::red);
     series[0]->clear();
     series[1]->clear();
     series[2]->clear();
@@ -2144,8 +2241,25 @@ void MainWidget::ChartDrawer(){
     series[3]->setName("Tilt 1");
     series[4]->setName("Tilt 2");
     series[5]->setName("Tilt 3");
+    Motionseries->setName("motion");
+    Distanceseries->setName("Distance");
+    IUVseries->setName("iUV");
+     IRseries->setName("IR");
+    qDebug()<<"set color and clear";
+    Distanceseries->clear();
+    IRseries->clear();
+    IUVseries->clear();
+    Motionseries->clear();
+    qDebug()<<"get data";
+    Distancechart->createDefaultAxes();
+    IRchart->createDefaultAxes();
+    IUVchart->createDefaultAxes();
+    Motionchart->createDefaultAxes();
 
-
+    short DisMax=0;
+    short IRMax=0;
+    short IUVMax=0;
+    short MotMax=0;
     for(int i=0; i<DataBuff_AccX.length();i++)
     {
         series[0]->append(i,DataBuff_AccX[i]);
@@ -2154,12 +2268,42 @@ void MainWidget::ChartDrawer(){
         series[3]->append(i,DataBuff_Tilt1[i]);
         series[4]->append(i,DataBuff_Tilt2[i]);
         series[5]->append(i,DataBuff_Tilt3[i]);
-        // qDebug()<<"data X "<<i<<"  "<<DataBuff_AccX[i]<<"  size  "<<DataBuff_AccX.length();
-        //qDebug()<<"data Y "<<i<<"  "<<DataBuff_AccY[i]<<"  size  "<<DataBuff_AccY.length();
-        // qDebug()<<"data Z "<<i<<"  "<<DataBuff_AccZ[i]<<"  size  "<<DataBuff_AccZ.length();
+        Distanceseries->append(i,DataBuff_Distance[i]);
+        IRseries->append(i,DataBuff_IR[i]);;
+        IUVseries->append(i,DataBuff_IUV[i]);
+        Motionseries->append(i,DataBuff_Motion[i]);
+
+        if(DataBuff_Distance[i]>DisMax)
+            DisMax=DataBuff_Distance[i];
+        if(DataBuff_IR[i]>IRMax)
+            IRMax=DataBuff_IR[i];
+        if(DataBuff_IUV[i]>IUVMax)
+            IUVMax=DataBuff_IUV[i];
+        if(DataBuff_Motion[i]>MotMax)
+            MotMax=DataBuff_Motion[i];
+
+
     }
+    IRchart->axisY()->setRange(0,IRMax);
+    Motionchart->axisY()->setRange(0,MotMax);
+    IUVchart->axisY()->setRange(0,IUVMax);
+    Distancechart->axisY()->setRange(0,DisMax);
+
+    IRchart->axisX()->setRange(0,20);
+    Motionchart->axisX()->setRange(0,20);
+    IUVchart->axisX()->setRange(0,20);
+    Distancechart->axisX()->setRange(0,20);
+    Motionchart->setMargins(QMargins(0,0,0,0));
+    Distancechart->setMargins(QMargins(0,0,0,0));
+
+    IRchart->setMargins(QMargins(0,0,0,0));
+    IUVchart->setMargins(QMargins(0,0,0,0));
     ui->Acceler_Chart->setChart(chart[0]);
     ui->Tilt_Chart->setChart(chart[1]);
+    ui->IR_Chart->setChart(IRchart);
+    ui->IUV_Chart->setChart(IUVchart);
+    ui->Motion_Chart->setChart(Motionchart);
+    ui->Distance_Chart->setChart(Distancechart);
 }
 void MainWidget::InsertDatatoDB(DeviceInfo df){
     // query(Db);
@@ -2494,7 +2638,7 @@ void MainWidget::ResetIp(QString ipaddr){
     if(m_bTCPConnected==true){
         return;
     }
-    GlobeObject::Server_->listen(QHostAddress(ipaddr),GlobeObject::port_);
+    GlobalObject::Server_->listen(QHostAddress(ipaddr),GlobalObject::port_);
     ui->ip_label->setText("重设ip"+ipaddr);
 }
 void MainWidget::on_Config_pushButton_clicked()
@@ -2518,8 +2662,11 @@ void MainWidget::ThreadLunchar(){
             // connect(this,&MainWidget::DataPthreadStart,Data_Thread,&DataThread::DataProcess);
             connect(this,&MainWidget::DataNeedtoDeal,Data_Thread,&DataThread::DataProcess_Simple);
             connect(Data_Thread,&DataThread::workDone,this,&MainWidget::ReceiveFromthread);
+            connect(Data_Thread,&DataThread::ToInqueryProc,this,&MainWidget::InqueryProc);
             //emit DataPthreadStart(info);
+
             qRegisterMetaType<DeviceInfo>("DeviceInfo");
+
         }
         if(Data_Thread->isRunning()){
             PromptInfomation("启动成功");
@@ -2567,4 +2714,61 @@ QString MainWidget::HexToDec(QByteArray arr)
     }
 
     return QString::number(value);
+}
+void MainWidget::mousePressEvent(QMouseEvent* event){
+    if(event->button()==Qt::LeftButton&&event->type() == QEvent::NonClientAreaMouseButtonPress){
+        this->setUpdatesEnabled(false);
+    }
+}
+void MainWidget::mouseMoveEvent(QMouseEvent *event){
+
+}
+void MainWidget::mouseReleaseEvent(QMouseEvent *event){
+    if(event->button()==Qt::LeftButton&&event->type() == QEvent::NonClientAreaMouseButtonPress){
+        this->setUpdatesEnabled(true);
+    }
+}
+QString MainWidget::HexTilteToDec(QByteArray arr){
+    //00 13
+   //第一个数据大于7就是负数
+    int value=0;
+    int len=arr.length();
+
+    for(int q=0;q<len;q++){
+        switch (arr[q]) {
+        case 'a':
+            value+=10*pow(16,len-1-q);
+            break;
+        case 'b':
+            value+=11*pow(16,len-1-q);
+            break;
+        case 'c':
+            value+=12*pow(16,len-1-q);
+            break;
+        case 'd':
+            value+=13*pow(16,len-1-q);
+            break;
+        case 'e':
+            value+=14*pow(16,len-1-q);
+            break;
+        case 'f':
+            value+=15*pow(16,len-1-q);
+            break;
+        default:
+            value+=(static_cast<int>(arr[q])-48)*pow(16,len-1-q);
+            break;
+        }
+
+    }
+
+   if(arr[0]=='a'|arr[0]=='b'|arr[0]=='c'|arr[0]=='d'|arr[0]=='e'|arr[0]=='f'|arr[0]=='8'|arr[0]=='9'){
+      qDebug()<<"more "<<value;
+       value-=65536;
+       qDebug()<<"adasd"<<value;
+   }
+    return QString::number(value);
+
+
+
+
 }

@@ -1427,7 +1427,7 @@
           <string notr="true">border-color: qlineargradient(spread:pad, x1:0, y1:0, x2:0, y2:1, stop:0 rgba(0, 0, 0, 255), stop:0.33 rgba(0, 0, 0, 255), stop:0.34 rgba(255, 30, 30, 255), stop:0.66 rgba(255, 0, 0, 255), stop:0.67 rgba(255, 255, 0, 255), stop:1 rgba(255, 255, 0, 255));</string>
          </property>
          <property name="currentIndex">
-          <number>0</number>
+          <number>5</number>
          </property>
          <widget class="QWidget" name="tab_3">
           <attribute name="title">
@@ -1455,7 +1455,7 @@
           </attribute>
           <layout class="QGridLayout" name="gridLayout_10">
            <item row="0" column="0">
-            <widget class="QGraphicsView" name="Distance_Chart"/>
+            <widget class="QtCharts::QChartView" name="Distance_Chart"/>
            </item>
           </layout>
          </widget>
@@ -1465,7 +1465,7 @@
           </attribute>
           <layout class="QGridLayout" name="gridLayout_11">
            <item row="0" column="0">
-            <widget class="QGraphicsView" name="IR_Chart"/>
+            <widget class="QtCharts::QChartView" name="IR_Chart"/>
            </item>
           </layout>
          </widget>
@@ -1475,7 +1475,7 @@
           </attribute>
           <layout class="QGridLayout" name="gridLayout_12">
            <item row="0" column="0">
-            <widget class="QGraphicsView" name="IUV_Chart"/>
+            <widget class="QtCharts::QChartView" name="IUV_Chart"/>
            </item>
           </layout>
          </widget>
@@ -1485,7 +1485,7 @@
           </attribute>
           <layout class="QGridLayout" name="gridLayout_13">
            <item row="0" column="0">
-            <widget class="QGraphicsView" name="Motion_Chart"/>
+            <widget class="QtCharts::QChartView" name="Motion_Chart"/>
            </item>
           </layout>
          </widget>

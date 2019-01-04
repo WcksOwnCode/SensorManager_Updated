@@ -145,7 +145,7 @@ void DataConfigDialog::on_DrawOnchart_pushButton_clicked()
     qDebug()<<"maxrow  "<<maxrow<<" maxcol  "<<maxcol;
     chart=new QChart();
 
-    chart->createDefaultAxes();
+
 
     // chart->axisX()->setRange(0,maxrow-1);
 
@@ -158,20 +158,27 @@ void DataConfigDialog::on_DrawOnchart_pushButton_clicked()
     chartSerial->setName(Headerlist[focus_col]);
     chartSerial->setColor(Qt::red);
     QList<QTableWidgetItem*>items=ui->Data_tableWidget->selectedItems();
-    qDebug()<<items;
+    ui->ChartView->setAutoFillBackground(true);
+   // qDebug()<<items;
 
-    qDebug()<<"for to get data"<<"x "<<focus_col;
+   // qDebug()<<"for to get data"<<"x "<<focus_col;
     for(int i=0;i<items.length();i++){
 
         QTableWidgetItem*item=items.at(i);
 
-        qDebug()<<"index "<<i<<"value "<< item->text().toDouble();
+       // qDebug()<<"index "<<i<<"value "<< item->text().toDouble();
 
 
         chartSerial->append(i,item->text().toDouble());
 
     }
+
+
+
+
     chart->addSeries(chartSerial);
+    chart->createDefaultAxes();
+    chart->setAnimationOptions(QChart::SeriesAnimations);  //在缩放窗口大小时可以用动画进行美化
     ui->ChartView->setChart(chart);
 
 

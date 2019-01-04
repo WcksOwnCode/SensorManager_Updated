@@ -4,7 +4,7 @@
 #include <QObject>
 #include <QThread>
 #include <QDebug>
-#include "globeobject.h"
+#include "globalobject.h"
 #include <QChart>
 #include <QValueAxis>
 #include <QLineSeries>
@@ -15,7 +15,10 @@ class DataThread:public QObject
     Q_OBJECT
 public:
     explicit DataThread( QObject *parent = 0);
-    void DataProcess(QString data);
+    void DataProcess(QString info, int p);
+    int infoSpliter(QString info, QStringList &returnstr, int px);
+
+    QStringList StringFileter(QString info,int );
     inline bool isRunning(){
         return m_bisRunning;
     }
@@ -26,9 +29,11 @@ public:
         return m_bBusy;
     }
     QString HexToDec(QByteArray arr);
+    QString HexTilteToDec(QByteArray arr);
 signals:
     void dataproDone(QString datainfo);
     void workDone(DeviceInfo *dev,int index);
+    void ToInqueryProc(QStringList &strList,int px=0);
 private:
     bool m_bisRunning=false;
     bool m_bBusy=false;

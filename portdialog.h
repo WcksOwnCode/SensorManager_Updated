@@ -5,7 +5,7 @@
 #include "mainwidget.h"
 #include <QTcpServer>
 #include <QTcpSocket>
-#include "globeobject.h"
+#include "globalobject.h"
 namespace Ui {
 class PortDialog;
 }

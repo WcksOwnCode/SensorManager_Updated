@@ -74,7 +74,7 @@ public:
     void PromptInfomation(QString str);
     void AddDeviceToNewDeviceTree();
     void AddDevicetoConnectedTree();
-    void UpdateTreeView();//更新树状图中的显示
+    void UpdateTreeView();
     void PrepareInquire();
     void InquireDev(unsigned char action,unsigned char mod,unsigned char time);
     void BtnDeviceScan();
@@ -116,12 +116,12 @@ public:
     void ChartDrawer();
     void InsertDatatoDB(DeviceInfo df);
     void ReadConfigFile();
-    bool createTable();       //创建数据库表
-    bool insert(const DeviceInfo *Dinfo);            //出入数据
-    bool queryAll();          //查询所有信息
-    bool updateById(int id,const DeviceInfo *Dinfo);  //更新
-    bool deleteById(int id);  //删除
-    bool sortById();          //排序
+    bool createTable();
+    bool insert(const DeviceInfo *Dinfo);
+    bool queryAll();
+    bool updateById(int id,const DeviceInfo *Dinfo);
+    bool deleteById(int id);
+    bool sortById();
     bool createTable(const DeviceInfo *Dinfo);
     friend class DataConfigDialog;
     friend class DataThread;
@@ -131,6 +131,11 @@ public:
     void SerailState(QString name);
     void BinaryConfigWrite_Read(_ConfigType ty,QString ConfigAddr);
     static QString HexToDec(QByteArray arr);
+    void CharacteristicofDevice(QString mac, quint16 po=0);
+    int SignalHexToDec(QString t);
+    void SysinfoofDevice(QString Mac, quint16 po);
+    void CirculationTask(int t=0);
+    QString HexTilteToDec(QByteArray arr);
 private slots:
     void OtherDeviceMenu(const QPoint &pos);
     void ConectedDeviceMenu(const QPoint &pos);
@@ -156,6 +161,11 @@ signals:
 
 protected:
      void closeEvent(QCloseEvent *event);
+
+protected:
+    void mousePressEvent(QMouseEvent* event);
+    void mouseMoveEvent(QMouseEvent *event);
+    void mouseReleaseEvent(QMouseEvent *event);
 private:
     Ui::MainWidget *ui;
     const int VERSION=1000;
@@ -224,6 +234,16 @@ private:
     QValueAxis *axisY[6]={nullptr};
     QChart *chart[6]={nullptr};
     QLineSeries *series[6]={nullptr};
+
+    QChart *Distancechart=nullptr;
+    QChart *IRchart=nullptr;
+    QChart *IUVchart=nullptr;
+    QChart *Motionchart=nullptr;
+    QLineSeries *Distanceseries=nullptr;
+    QLineSeries *IRseries=nullptr;
+    QLineSeries *IUVseries=nullptr;
+    QLineSeries *Motionseries=nullptr;
+
    // QValueAxis *axisY[6]={nullptr};
     int DrawCount=0;
     QList<short>DataBuff_AccX;
@@ -232,8 +252,15 @@ private:
     QList<float>DataBuff_Tilt1;
     QList<float>DataBuff_Tilt2;
     QList<float>DataBuff_Tilt3;
+
+    QList<short>DataBuff_IR;
+    QList<short>DataBuff_IUV;
+    QList<short>DataBuff_Motion;
+    QList<short>DataBuff_Distance;
+
+
     RenameDialog *ReDialog;
-    const int DrawMaxCount=20;//图上只显示20个点 
+    const int DrawMaxCount=20;//图上只显示20个点
     CsvWriter *Csv[18]={nullptr};
    // QString CsvFileAddr[18]={QCoreApplication::applicationDirPath()+"/"};
     bool m_bCsv=true;
@@ -251,9 +278,8 @@ private:
     QStandardItemModel* model_Scan =nullptr;
     bool m_bTcp_1_con=false;
     bool m_bTcp_2_con=false;
+    QTimer *RssiInqTimer=nullptr;
 };
-
-
 
 
 #endif // MAINWIDGET_H

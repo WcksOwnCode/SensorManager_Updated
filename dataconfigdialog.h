@@ -13,7 +13,7 @@
 #include <QValueAxis>
 #include <QLineSeries>
 #include <QMessageBox>
-#include "globeobject.h"
+#include "globalobject.h"
 
 QT_CHARTS_USE_NAMESPACE;
 

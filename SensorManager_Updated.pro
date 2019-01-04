@@ -30,7 +30,6 @@ CONFIG += c++11
 SOURCES += \
         main.cpp \
         mainwidget.cpp \
-    globeobject.cpp \
     portdialog.cpp \
     treeviewmodel.cpp \
     serialportdialog.cpp \
@@ -38,11 +37,11 @@ SOURCES += \
     dataconfigdialog.cpp \
     renamedialog.cpp \
     environmentconfig.cpp \
-    sensorconfig_dialog.cpp
+    sensorconfig_dialog.cpp \
+    globalbject.cpp
 
 HEADERS += \
         mainwidget.h \
-    globeobject.h \
     portdialog.h \
     treeviewmodel.h \
     serialportdialog.h \
@@ -50,7 +49,8 @@ HEADERS += \
     dataconfigdialog.h \
     renamedialog.h \
     environmentconfig.h \
-    sensorconfig_dialog.h
+    sensorconfig_dialog.h \
+    globalobject.h
 
 FORMS += \
         mainwidget.ui \

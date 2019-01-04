@@ -1,5 +1,5 @@
-#ifndef GLOBEOBJECT_H
-#define GLOBEOBJECT_H
+#ifndef GlobalObject_H
+#define GlobalObject_H
 #include <QTcpServer>
 #include <QTcpSocket>
 #include <QSerialPort>
@@ -93,10 +93,10 @@ private:
     QString Mac;
 };
 
-class GlobeObject
+class GlobalObject
 {
 public:
-    GlobeObject();
+    GlobalObject();
     static QTcpSocket *Socket_;//通信套接字
     static QTcpServer *Server_;//监听套接字
     static quint16 port_;//端口号
@@ -106,6 +106,7 @@ public:
 
 
     static  QStringList ControlCommand;
+    static QStringList FalcutyCode;
     //template <class T1,class T2>
     //static bool _Assert(T1 v1,T2 v2,_type ty);
     static bool _Assert(short v1,int v2,_type ty);
@@ -146,7 +147,7 @@ public:
     uchar connfailcount='0';
     QString time="";
     short faultcode=0;//modify at 20180417 uchar->uint
-    short fault=0;
+    QString fault=0;
     float voltage=0;//uchar->uint
     short memory=0;
     QString workmode="";
@@ -255,4 +256,4 @@ public:
   bool m_bOpen=false;
 
 };
-#endif // GLOBEOBJECT_H
+#endif // GlobalObject_H

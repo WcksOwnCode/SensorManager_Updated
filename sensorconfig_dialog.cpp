@@ -1,6 +1,6 @@
 #include "sensorconfig_dialog.h"
 #include "ui_sensorconfig_dialog.h"
-#include "globeobject.h"
+#include "GlobalObject.h"
 
 SensorConfig_Dialog::SensorConfig_Dialog(QList<DeviceInfo *> DL, QWidget *parent) :
     QDialog(parent),

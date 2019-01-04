@@ -2,7 +2,7 @@
 #define SENSORCONFIG_DIALOG_H
 
 #include <QDialog>
-#include "globeobject.h"
+#include "globalobject.h"
 #include <QMessageBox>
 #include <QComboBox>
 namespace Ui {

@@ -175,7 +175,7 @@ void SerialPortDialog::on_Command_comboBox_currentIndexChanged(int index)
         return;
     }
     ui->Input_textEdit->clear();
-    ui->Input_textEdit->setText(GlobeObject::ControlCommand[index-1]);
+    ui->Input_textEdit->setText(GlobalObject::ControlCommand[index-1]);
     ui->HexData_radioButton->setChecked(true);
     ui->BinaryData_radioButton->setChecked(false);
 

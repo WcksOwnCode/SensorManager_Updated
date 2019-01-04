@@ -194,7 +194,7 @@
     </rect>
    </property>
    <property name="text">
-    <string>画图</string>
+    <string>曲线图</string>
    </property>
   </widget>
  </widget>

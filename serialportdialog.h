@@ -4,7 +4,7 @@
 #include <QDialog>
 #include <QtSerialPort/QSerialPort>
 #include <QtSerialPort/QSerialPortInfo>
-#include "globeobject.h"
+#include "globalobject.h"
 namespace Ui {
 class SerialPortDialog;
 }
