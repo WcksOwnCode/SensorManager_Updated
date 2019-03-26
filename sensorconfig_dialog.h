@@ -2,9 +2,12 @@
 #define SENSORCONFIG_DIALOG_H
 
 #include <QDialog>
-#include "globeobject.h"
+#include "globalobject.h"
 #include <QMessageBox>
 #include <QComboBox>
+#include <QMutex>
+#include <QException>
+
 namespace Ui {
 class SensorConfig_Dialog;
 }
@@ -14,12 +17,13 @@ class SensorConfig_Dialog : public QDialog
     Q_OBJECT
 
 public:
-    explicit SensorConfig_Dialog(QList<DeviceInfo*>DL,QWidget *parent = nullptr);
+    explicit SensorConfig_Dialog(QList<DeviceInfo*> DL, QWidget *parent = nullptr);
     ~SensorConfig_Dialog();
      void SetCorrEnabled(bool b);
      void SetValueFromDevice();
      void SetAllControlEnabled(bool b);
      void LoadCurrentControlMethod();
+     void setAllControlToDefault();
 
 private slots:
     void on_Mac_comboBox_currentIndexChanged(int index);
@@ -56,15 +60,24 @@ private slots:
 
     void on_DataType_comboBox_currentIndexChanged(int index);
 
+    void on_LoadMethod_pushButton_clicked();
+
+    void on_ClearAllCorrection_pushButton_clicked();
+
+signals:
+    void Synchronization(QList<DeviceInfo *>DL);
+
 private:
     Ui::SensorConfig_Dialog *ui;
-    QList<DeviceInfo *> DL;
+    QList<DeviceInfo*> DL;
     QVector<QCheckBox*> ck;
     QVector<QComboBox*> Symbos;
     QVector<QComboBox*> LogicBox;
     QVector<QLineEdit*> LineEditBox;
     QVector<QComboBox*> CommandBox;
+    QVector<QComboBox*> PortBox;
     bool m_buiready=false;
+    bool m_bMethodChanged=false;
 };
 
 #endif // SENSORCONFIG_DIALOG_H

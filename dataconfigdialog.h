@@ -13,7 +13,9 @@
 #include <QValueAxis>
 #include <QLineSeries>
 #include <QMessageBox>
-#include "globeobject.h"
+#include <QThread>
+#include "database_thread.h"
+#include "globalobject.h"
 
 QT_CHARTS_USE_NAMESPACE;
 
@@ -30,6 +32,7 @@ public:
     ~DataConfigDialog();
     void CellClicked_(int r, int c);
 
+    void GetFromDataBase(QList< QList<QString>*>*);
 private slots:
     void on_ConnectDB_pushButton_clicked();
 
@@ -41,6 +44,13 @@ private slots:
 
     void on_DrawOnchart_pushButton_clicked();
 
+    void on_Accept_pushButton_clicked();
+
+
+    void on_IndexStart_spinBox_valueChanged(int arg1);
+
+signals:
+    void QueryData(QString MAC,int Datacount);
 private:
     Ui::DataConfigDialog *ui;
     QStandardItemModel *model;
@@ -51,8 +61,10 @@ private:
     bool data_get=false;
     int focus_row=-1;
     int focus_col=-1;
+    int data_count=0;
    QVector< double> focusData;
    QStringList Headerlist;
+
 
 };
 

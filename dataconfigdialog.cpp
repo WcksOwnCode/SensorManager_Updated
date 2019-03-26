@@ -1,3 +1,4 @@
+#pragma execution_character_set("utf-8")
 #include "dataconfigdialog.h"
 #include "ui_dataconfigdialog.h"
 
@@ -22,14 +23,14 @@ DataConfigDialog::DataConfigDialog(QList<DeviceInfo*> *CList,QWidget *parent) :
         ui->Name_comboBox->addItem((*DeviceList)[i]->name);
     }
 
-    db = QSqlDatabase::database("DeviceData"); //建立数据库连接
+   /* db = QSqlDatabase::database("DeviceData"); //建立数据库连接
     if(db.isOpen()){
     }
     else{
         db.open();
     }
 
-    ui->DataBaseStatu_label->setText("已经连接");
+    ui->DataBaseStatu_label->setText("已经连接");*/
     ui->Data_tableWidget->setStyleSheet("QTableView { border: none;"
                                         "background-color: #8EDE21;"
                                         "selection-background-color: #999}");
@@ -43,6 +44,11 @@ DataConfigDialog::DataConfigDialog(QList<DeviceInfo*> *CList,QWidget *parent) :
     ui->Data_tableWidget->setSelectionBehavior(QAbstractItemView::SelectColumns); //选中为行
 
     connect(ui->Data_tableWidget,&QTableWidget::cellClicked,this,&DataConfigDialog::CellClicked_);
+
+    this->setWindowTitle(QStringLiteral("DataBase"));
+
+
+
 }
 
 DataConfigDialog::~DataConfigDialog()
@@ -57,61 +63,31 @@ DataConfigDialog::~DataConfigDialog()
 }
 
 void DataConfigDialog::on_ConnectDB_pushButton_clicked()
-{
-    QSqlQuery query(db);
+{  
 
-    //QSqlRecord rec = query.record();
-    // qDebug() << QObject::tr("automobil表字段数：" ) << rec.count();
-    qDebug()<<"select * from Dev where mac = \""+ui->Mac_comboBox->currentText()+"\"";
-    if(query.exec("select * from Dev where mac = '"+ui->Mac_comboBox->currentText()+"'")){
+    int maxRowcount=ui->MaxItemCount_spinBox->text().toInt();
 
-    }
-    else{
-        QSqlError lastError = query.lastError();
-        qDebug() << lastError.driverText();
-    }
-    int rowcount=1;
-    ui->Data_tableWidget->clear();
-    ui->Data_tableWidget->setRowCount(1000);
+
+
+    ui->Data_tableWidget->setRowCount(maxRowcount);
     ui->Data_tableWidget->setColumnCount(17);
-    while(query.next())
-    {
-        for(int index = 0; index <17; index++){
-            ui->Data_tableWidget->setItem(rowcount,index,new QTableWidgetItem(query.value(index).toString()));
-            qDebug()<<query.value(index).toString();
+    emit QueryData(ui->Mac_comboBox->currentText(),maxRowcount);
 
-        }
-        rowcount++;
-    }
 }
 
 void DataConfigDialog::on_Input_Query_pushButton_clicked()
 {
-    QString inputMac=ui->Input_Query_pushButton->text();
+    QString inputMac=ui->Mac_Input_lineEdit->text();
     if(inputMac.length()!=12){
+       // qDebug()<<inputMac<<"   length   "<<inputMac.length();
         QMessageBox::warning(this,"warning","invalid Mac address!");
         return;
     }
     QSqlQuery query(db);
-
-    //QSqlRecord rec = query.record();
-    // qDebug() << QObject::tr("automobil表字段数：" ) << rec.count();
-    qDebug()<<"select * from Dev where mac = \""+inputMac+"\"";
-    if(query.exec("select * from Dev where mac = \""+inputMac+"\"")){
-
-    }
-    else{
-        QSqlError lastError = query.lastError();
-        qDebug() << lastError.driverText();
-    }
-    int rowcount=1;
-    while(query.next())
-    {
-        for(int index = 0; index <17; index++){
-            model->setItem(rowcount,index,new QStandardItem(query.value(index).toString()));
-        }
-    }
-    data_get=true;
+    int maxRowcount=ui->MaxItemCount_spinBox->text().toInt();
+    ui->Data_tableWidget->setRowCount(maxRowcount);
+    ui->Data_tableWidget->setColumnCount(17);
+    emit QueryData(inputMac,maxRowcount);
 }
 
 void DataConfigDialog::on_Mac_comboBox_currentIndexChanged(int index)
@@ -124,7 +100,7 @@ void DataConfigDialog::on_Name_comboBox_currentIndexChanged(int index)
     ui->Mac_comboBox->setCurrentIndex(index);
 }
 void DataConfigDialog::CellClicked_(int r,int c){
-    qDebug()<<"choosed row "<<r<<"  choose colomn "<<c;
+   // qDebug()<<"choosed row "<<r<<"  choose colomn "<<c;
 
     focus_col=c;
     focus_row=r;
@@ -139,40 +115,82 @@ void DataConfigDialog::on_DrawOnchart_pushButton_clicked()
         return;
     }
 
+    int Data_s=ui->IndexStart_spinBox->text().toInt();
+    int Data_e=ui->IndexEnd_spinBox->text().toInt();
+    if(Data_e<Data_s){
+        QMessageBox::warning(nullptr,"error",QString::fromLocal8Bit("索引起始点大于终止点"));
+        return;
+    }
+    if(Data_e>data_count){
+        QMessageBox::warning(nullptr,"error",QString::fromLocal8Bit("索引超过数据总数"));
+
+        return;
+    }
     //导入数据
     int maxrow= ui->Data_tableWidget->rowCount();
     int maxcol=ui->Data_tableWidget->columnCount();
-    qDebug()<<"maxrow  "<<maxrow<<" maxcol  "<<maxcol;
+   // qDebug()<<"maxrow  "<<maxrow<<" maxcol  "<<maxcol;
     chart=new QChart();
-
-    chart->createDefaultAxes();
-
     // chart->axisX()->setRange(0,maxrow-1);
-
     // chart->axisY()->setRange(-1200,1200);
-
     chart->setMargins(QMargins(0,0,0,0));//铺满
-
     chartSerial=new QLineSeries;
     // qDebug()<<"set name"<<ui->Data_tableWidget->takeHorizontalHeaderItem(focus_col);
     chartSerial->setName(Headerlist[focus_col]);
     chartSerial->setColor(Qt::red);
     QList<QTableWidgetItem*>items=ui->Data_tableWidget->selectedItems();
-    qDebug()<<items;
+    ui->ChartView->setAutoFillBackground(true);
+    // qDebug()<<items;
 
-    qDebug()<<"for to get data"<<"x "<<focus_col;
-    for(int i=0;i<items.length();i++){
+    // qDebug()<<"for to get data"<<"x "<<focus_col;
+
+    for(int i=Data_s;i<Data_e;i++){
 
         QTableWidgetItem*item=items.at(i);
 
-        qDebug()<<"index "<<i<<"value "<< item->text().toDouble();
+        // qDebug()<<"index "<<i<<"value "<< item->text().toDouble();
 
 
         chartSerial->append(i,item->text().toDouble());
 
     }
     chart->addSeries(chartSerial);
+    chart->createDefaultAxes();
+    chart->setAnimationOptions(QChart::SeriesAnimations);  //在缩放窗口大小时可以用动画进行美化
     ui->ChartView->setChart(chart);
+}
 
+void DataConfigDialog::on_Accept_pushButton_clicked()
+{
+    this->close();
+}
+void DataConfigDialog::GetFromDataBase(QList< QList<QString>*>*Data){
 
+    qDebug()<<"get data from database";
+    for(int i=0;i<Data->length();i++){
+        for(int j=0;j<Data->at(i)->length();j++){
+            if(j<17){
+                ui->Data_tableWidget->setItem(i,j,new QTableWidgetItem(Data->at(i)->at(j)));
+                //qDebug()<<"data at"<< i<<" "<<j<<Data->at(i)->at(j);
+            }
+        }
+    }
+    data_count=Data->length();
+    ui->IndexEnd_spinBox->setValue(data_count);
+    ui->Data_tableWidget->horizontalHeader()->setDragEnabled(true);
+    ui->Data_tableWidget->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
+
+    //为了防止在画曲线图时候数据数量选择越界，此处直接设置可选范围，后续报错越界也就不需要了
+    ui->IndexStart_spinBox->setRange(1,data_count-1);
+    ui->IndexEnd_spinBox->setRange(1,data_count);
+}
+
+void DataConfigDialog::on_IndexStart_spinBox_valueChanged(int arg1)
+{
+    if(arg1<0){
+        ui->IndexStart_spinBox->setValue(0);
+    }
+    if(arg1>data_count){
+        ui->IndexStart_spinBox->setValue(data_count);
+    }
 }

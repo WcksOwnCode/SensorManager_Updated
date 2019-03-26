@@ -1,3 +1,4 @@
+﻿#pragma execution_character_set("utf-8")
 #include "renamedialog.h"
 #include "ui_renamedialog.h"
 
@@ -6,7 +7,7 @@ RenameDialog::RenameDialog(QString Name, const QString Mac, QWidget *parent) :
     ui(new Ui::RenameDialog)
 {
     ui->setupUi(this);
-    this->setWindowTitle("Rename");
+    this->setWindowTitle(QStringLiteral("重命名设备"));
     ui->OldName_label->setText(Name);
     this->Mac=Mac;
 }
