@@ -1,28 +1,29 @@
+#pragma execution_character_set("utf-8")
 #include "sensorconfig_dialog.h"
 #include "ui_sensorconfig_dialog.h"
-#include "globeobject.h"
+#include "globalobject.h"
 
 SensorConfig_Dialog::SensorConfig_Dialog(QList<DeviceInfo *> DL, QWidget *parent) :
     QDialog(parent),
     ui(new Ui::SensorConfig_Dialog)
 {
-    qDebug()<<"dadsda1";
+
     ui->setupUi(this);
-    qDebug()<<"dadsda2";
+
     ui->Mac_comboBox->addItem("");
 
-   ui->Name_comboBox->addItem("");
+    ui->Name_comboBox->addItem("");
 
     ui->DataType_comboBox->addItem("");
-    qDebug()<<"dadsda5";
+
     for(int i=0;i<DL.length();i++){
-        qDebug()<<"i"<<DL.length()<<"  "<<i;
+
         ui->Mac_comboBox->addItem(DL[i]->mac);
         ui->Name_comboBox->addItem(DL[i]->name);
     }
-    qDebug()<<"dadsda6";
+
+
     this->DL=DL;
-    qDebug()<<"dadsda7";
     ui->DataType_comboBox->addItem("motion");
     ui->DataType_comboBox->addItem("AccX");
     ui->DataType_comboBox->addItem("AccY");
@@ -35,9 +36,6 @@ SensorConfig_Dialog::SensorConfig_Dialog(QList<DeviceInfo *> DL, QWidget *parent
     ui->DataType_comboBox->addItem("beta");
     ui->DataType_comboBox->addItem("gama");
     ui->DataType_comboBox->addItem("temperature");
-
-
-
     SetCorrEnabled(false);
     SetAllControlEnabled(false);
     ui->Activated_2_checkBox_2->setEnabled(false);
@@ -80,6 +78,18 @@ SensorConfig_Dialog::SensorConfig_Dialog(QList<DeviceInfo *> DL, QWidget *parent
     CommandBox.push_back(ui->Command_comboBox3);
     CommandBox.push_back(ui->Command_comboBox4);
     CommandBox.push_back(ui->Command_comboBox5);
+
+    PortBox.push_back(ui->Port_comboBox_1);
+    PortBox.push_back(ui->Port_comboBox_2);
+    PortBox.push_back(ui->Port_comboBox_3);
+    PortBox.push_back(ui->Port_comboBox_4);
+    PortBox.push_back(ui->Port_comboBox_5);
+    for(int i=0;i<5;i++){
+        PortBox[i]->addItem("");
+        PortBox[i]->addItem("Port1");
+        PortBox[i]->addItem("Port2");
+    }
+
     QImage img;
 
     if(img.load(":/new/logo/rsc/logo.jpg"))//before load execute qmake
@@ -96,9 +106,9 @@ SensorConfig_Dialog::SensorConfig_Dialog(QList<DeviceInfo *> DL, QWidget *parent
     ui->ClearAllControlMethod_pushButton->setEnabled(false);
     ui->ClearAllCorrection_pushButton->setEnabled(false);
     ui->Accept_pushButton->setEnabled(false);
-    qDebug()<<"over";
 
-   m_buiready=true;
+    this->setWindowTitle(QStringLiteral("传感器配置"));
+    ;    m_buiready=true;
 }
 SensorConfig_Dialog::~SensorConfig_Dialog()
 {
@@ -106,31 +116,61 @@ SensorConfig_Dialog::~SensorConfig_Dialog()
 }
 void SensorConfig_Dialog::LoadCurrentControlMethod(){
 
-    int Cindex=ui->Mac_comboBox->currentIndex()-1;
-    if(DL.length()==0||Cindex>=DL.length()){
+    int Cindex=ui->Mac_comboBox->currentIndex()-1;//当前选中的设备mac索引 Choosed index
+    if(DL.length()==-1||Cindex>=DL.length()){
+        qDebug()<<"LoadCurrentControlMethod entry check failed   DL.length()==0||Cindex>=DL.length()";
         return;
     }
-    if(Cindex>0){
-        if(ui->DataType_comboBox->currentIndex()>0){
-            int dataindex=ui->DataType_comboBox->currentIndex();
-            for(int i=0;i<DL[Cindex]->ControlMethodList.length()&&DL[Cindex]->ControlMethodList[i]!=nullptr;i++){
-                if(DL[Cindex]->ControlMethodList[i]->sequece==dataindex-1){
-                    //load
-                    //mafan!!!!!
-                   ck[i]->setChecked(true);
-                   Symbos[i*2]->setCurrentIndex(DL[Cindex]->ControlMethodList[i]->i_sym_one);
-                   LineEditBox[i*2]->setText(QString::number(DL[Cindex]->ControlMethodList[i]->i_value));
-                   if(DL[Cindex]->ControlMethodList[i]->_Log!=LOGI_NONE){
-                     Symbos[i*2+1]->setCurrentIndex(DL[Cindex]->ControlMethodList[i]->i_sym_two);
-                     LineEditBox[i*2+1]->setText(QString::number(DL[Cindex]->ControlMethodList[i]->i_value_2));
-                     LogicBox[i]->setEnabled(true);
-                     LogicBox[i]->setCurrentIndex(DL[Cindex]->ControlMethodList[i]->_Log);
-                   }
 
+    setAllControlToDefault();//ui 列表置空
+    if(Cindex>=0){//负数错误越界检测
+        // if(ui->DataType_comboBox->currentIndex()>0){
+        int dataindex=ui->DataType_comboBox->currentIndex();
+
+        int mCount=0;
+        for(int i=0;i<DL[Cindex]->ControlMethodList.length();i++){
+            if(DL[Cindex]->ControlMethodList[i]->sequece==dataindex-1){
+                //load
+                //mafan!!!!!、
+                qDebug()<<"method loading ...";
+                if(DL[Cindex]->ControlMethodList[i]!=nullptr){
+                    qDebug()<<"ControlMethodList == null ptr check failed  a null ptr , methodlist is empty";
                 }
+                if(mCount>=5){
+                    qDebug()<<"mCount>=5";
+                    mCount=mCount%5;
+                }
+
+                ck[mCount]->setChecked(true);
+
+                Symbos[mCount*2]->setCurrentIndex(DL[Cindex]->ControlMethodList[i]->i_sym_one);
+
+                LineEditBox[mCount*2]->setText(QString::number(DL[Cindex]->ControlMethodList[i]->i_value));
+
+                PortBox[mCount]->setCurrentIndex(DL[Cindex]->ControlMethodList[i]->serialportnum);
+                CommandBox[mCount]->setCurrentIndex(DL[Cindex]->ControlMethodList[i]->Message_);
+                if(DL[Cindex]->ControlMethodList[i]->_Log!=LOGI_NONE){
+
+                    LogicBox[mCount]->setEnabled(true);
+
+                    LogicBox[mCount]->setCurrentIndex(DL[Cindex]->ControlMethodList[i]->_Log);
+
+                    Symbos[mCount*2+1]->setCurrentIndex(DL[Cindex]->ControlMethodList[i]->i_sym_two);
+
+                    LineEditBox[mCount*2+1]->setText(QString::number(DL[Cindex]->ControlMethodList[i]->i_value_2));
+                }
+                mCount++;
+
+            }
+            else{
+                qDebug()<<" if(DL[Cindex]->ControlMethodList[i]->sequece==dataindex-1)  check failed ";
             }
         }
+        qDebug()<<"for loop check failed or out form for";
+        // }
     }
+    m_bMethodChanged=false;
+
 
 
 }
@@ -146,6 +186,7 @@ void SensorConfig_Dialog::on_Mac_comboBox_currentIndexChanged(int index)
         ui->ClearAllControlMethod_pushButton->setEnabled(true);
         ui->ClearAllCorrection_pushButton->setEnabled(true);
         ui->Accept_pushButton->setEnabled(true);
+        //LoadCurrentControlMethod();
     }
     else{
         SetValueFromDevice();
@@ -154,7 +195,9 @@ void SensorConfig_Dialog::on_Mac_comboBox_currentIndexChanged(int index)
         ui->ClearAllCorrection_pushButton->setEnabled(false);
         ui->Accept_pushButton->setEnabled(false);
     }
+    m_bMethodChanged=false;
 }
+
 
 void SensorConfig_Dialog::on_Name_comboBox_currentIndexChanged(int index)
 {
@@ -175,6 +218,7 @@ void SensorConfig_Dialog::on_Name_comboBox_currentIndexChanged(int index)
         ui->ClearAllCorrection_pushButton->setEnabled(false);
         ui->Accept_pushButton->setEnabled(false);
     }
+    m_bMethodChanged=false;
 }
 void SensorConfig_Dialog::SetCorrEnabled(bool b){
     ui->CorIr->setEnabled(b);
@@ -256,6 +300,22 @@ void SensorConfig_Dialog::on_SetValue_pushButton_clicked()
     }
 
     QMessageBox::information(this,"Success","Set Successed!");
+
+}
+void SensorConfig_Dialog::setAllControlToDefault(){
+
+    for(int i=0;i<5;i++){
+        LogicBox[i]->setCurrentText(0);
+        CommandBox[i]->setCurrentIndex(0);
+        PortBox[i]->setCurrentIndex(0);
+        Symbos[i*2]->setCurrentIndex(0);
+        Symbos[i*2+1]->setCurrentIndex(0);
+        LineEditBox[i*2]->setText("");
+        LineEditBox[i*2+1]->setText("");
+        ck[i]->setChecked(false);
+
+    }
+    m_bMethodChanged=false;
 
 }
 void SensorConfig_Dialog::SetAllControlEnabled(bool b){
@@ -459,6 +519,7 @@ void SensorConfig_Dialog::on_Logic_comboBox3_currentIndexChanged(int index)
         ui->Symbol_comboBox6->setEnabled(!st);
         ui->Logic_comboBox3->setEnabled(!st);
     }
+
 }
 
 void SensorConfig_Dialog::on_Logic_comboBox4_currentIndexChanged(int index)
@@ -475,6 +536,7 @@ void SensorConfig_Dialog::on_Logic_comboBox4_currentIndexChanged(int index)
         ui->Symbol_comboBox8->setEnabled(!st);
         ui->Logic_comboBox4->setEnabled(!st);
     }
+
 }
 
 void SensorConfig_Dialog::on_Logic_comboBox5_currentIndexChanged(int index)
@@ -497,11 +559,18 @@ void SensorConfig_Dialog::on_Accept_pushButton_clicked()
 {
     //根据数据控制面板生成Method类并放置到对应Deviceinfo类中
     qDebug()<<"Accept_pushButton 1";
-    Method * Mt=new Method();
+
     // int value1,value2;
     int C_index=ui->DataType_comboBox->currentIndex()-1;
+    int id=ui->Mac_comboBox->currentIndex()-1;
+    int Mcount=0;
+    qDebug()<<DL[id]->ControlMethodList.length()<<"    dl";
     for(int i=0;i<5;i++){
-        qDebug()<<"Accept_pushButton 1i"<<i;
+        Method * Mt=new Method();
+        Mt->serialportnum=PortBox[i]->currentIndex();
+        //Mt->sequece;
+        Mt->sequece=C_index;
+        qDebug()<<"Accept_pushButton "<<i;
         if(ck[i]->isChecked()){
             if(LogicBox[i]->currentIndex()!=0){
                 switch(LogicBox[i]->currentIndex()){
@@ -519,7 +588,7 @@ void SensorConfig_Dialog::on_Accept_pushButton_clicked()
             else{
                 Mt->_Log=LOGI_NONE;
             }
-
+            qDebug()<<"symbol one ";
             switch(Symbos[i*2]->currentIndex()){
             case 0:
                 Mt->i_sym_one=NONE;
@@ -550,14 +619,15 @@ void SensorConfig_Dialog::on_Accept_pushButton_clicked()
                 }
                 break;
             }
+            qDebug()<<"symbol two ";
             if(Mt->_Log!=LOGI_NONE){
                 //第二条件
-                switch(Symbos[i*2]->currentIndex()){
+                switch(Symbos[i*2+1]->currentIndex()){
                 case 0:
                     Mt->i_sym_two=NONE;
                     break;
                 case 1://<
-                    Mt->i_sym_one=LESS;
+                    Mt->i_sym_two=LESS;
                     if(C_index<8){
                         Mt->i_value_2=LineEditBox[2*i+1]->text().toInt();
                     }else{
@@ -582,24 +652,78 @@ void SensorConfig_Dialog::on_Accept_pushButton_clicked()
                     }
                     break;
                 }
+
+
+
             }
 
-            int id=ui->Mac_comboBox->currentIndex()-1;
-            if(DL[id]->MethodCount[C_index]<DL[id]->ControlMethodCount_Max)
+            //check duplicate method items
+            bool insertFlag=true;
+            for(int q=0;q<DL[id]->ControlMethodList.length();q++)
             {
-                Mt->sequece=C_index;
-                Mt->Message_=CommandBox[i]->currentIndex()-1;
-                DL[ui->Mac_comboBox->currentIndex()-1]->ControlMethodList.push_back(Mt);
-                DL[id]->MethodCount[C_index]++;
-            }
-            else{
-                for(int i=0;i<DL[id]->ControlMethodList.length();i++){//替换最先创建的method
-                    if(DL[id]->ControlMethodList[i]->sequece==C_index){
-                        DL[id]->ControlMethodList.replace(i,Mt);
+                bool ok1=false;
+                if(Mt->sequece!=DL[id]->ControlMethodList[q]->sequece){
+                    continue;
+                }
+                if(Mt->i_sym_one!=NONE){
+                    if(Mt->i_sym_one!=DL[id]->ControlMethodList[q]->i_sym_one){
+                        ok1=true;
+
+                    }
+                    if(Mt->i_value==DL[id]->ControlMethodList[q]->i_value){
+
+                        ok1=true;
+
                     }
                 }
-                LoadCurrentControlMethod();
+                if(Mt->i_sym_two!=NONE){
+                    if(Mt->i_sym_two!=DL[id]->ControlMethodList[q]->i_sym_two){
+                        ok1=true;
+                    }
+                    if(Mt->i_value==DL[id]->ControlMethodList[q]->i_value){
+
+                        ok1=true;
+
+                    }
+                    if(Mt->i_value_2==DL[id]->ControlMethodList[q]->i_value_2){
+                        if(Mt->i_value_2==DL[id]->ControlMethodList[q]->i_value_2){
+                            ok1=true;
+                        }
+                    }
+                }
+                if(!ok1){
+
+                    insertFlag=false;
+                    break;
+                }
+
             }
+            if(!insertFlag){
+                if(DL[id]->MethodCount[C_index]<DL[id]->ControlMethodCount_Max)//<5?检查是不是添加了超过5条
+                {
+
+                    Mt->Message_=CommandBox[i]->currentIndex()-1;
+
+                    DL[ui->Mac_comboBox->currentIndex()-1]->ControlMethodList.push_back(Mt);
+                    DL[id]->MethodCount[C_index]++;
+
+                }
+                else{
+                    for(int i=0;i<DL[id]->ControlMethodList.length();i++){//替换最先创建的method
+                        if(DL[id]->ControlMethodList[i]->sequece==C_index){
+                            DL[id]->ControlMethodList.replace(i,Mt);
+                        }
+                    }
+
+                }
+                DL[id]->m_bMethodexecRunable=true;
+
+                Mcount++;
+            }
+            else{
+                qDebug()<<"same control item -->ignore!";
+            }
+
 
 
         }
@@ -608,18 +732,71 @@ void SensorConfig_Dialog::on_Accept_pushButton_clicked()
         }
     }
 
+
+
+    GlobalObject::locker->lock();
+    try {
+
+
+        for(int j=0;j<GlobalObject::g_ConnectDevList->length();j++){
+
+            if((*(GlobalObject::g_ConnectDevList))[j]->mac==DL[id]->mac){
+
+                (*(GlobalObject::g_ConnectDevList))[j]->ControlMethodList=DL[id]->ControlMethodList;
+                (*(GlobalObject::g_ConnectDevList))[j]->m_bMethodexecRunable=true;
+
+                for(int q=0;q<12;q++){
+
+                    (*(GlobalObject::g_ConnectDevList))[j]->MethodCount[q]=DL[id]->MethodCount[q];
+                }
+
+                break;
+            }
+        }
+        qDebug()<<" put to g_connectdevice list done";
+
+    } catch (QException &excep) {
+        qDebug()<<excep.what();
+        exit(0);
+    }
+
+    GlobalObject::locker->unlock();
+    setAllControlToDefault();
+    if(Mcount>0){
+        QMessageBox::information(this,"Set Successfully","Add "+QString::number(Mcount)+" control stratagies");
+    }
 }
 
 void SensorConfig_Dialog::on_ClearAllControlMethod_pushButton_clicked()
 {
-    if(ui->Mac_comboBox->currentIndex()>0){
-        for(int i=0;i<DL[ui->Mac_comboBox->currentIndex()-1]->ControlMethodList.length();i++){
-            if(DL[ui->Mac_comboBox->currentIndex()-1]->ControlMethodList[i]!=nullptr){
-                delete DL[ui->Mac_comboBox->currentIndex()-1]->ControlMethodList[i];
-                DL[ui->Mac_comboBox->currentIndex()-1]->ControlMethodList[i]=nullptr;
-            }
+    //由于这部分数据是在数据线程使用，所以这里不能够直接析构，会使程序崩溃
+    qDebug()<<"clear all control method";
+    int index=ui->Mac_comboBox->currentIndex()-1;
+    if(index>0){
+
+        for(int i=0;i<DL[index]->ControlMethodList.length();i++){
+
+            DL[index]->m_bMethodexecRunable=false;
+            if(DL[index]->ControlMethodList[i]!=nullptr){
+                DL[index]->ControlMethodList.clear();            }
+
+            DL[index]->m_bMethodexecRunable=true;
         }
+
     }
+    GlobalObject::locker->lock();
+    qDebug()<<"clear all g_connect list control method";
+    for(int i=0;i<DL[index]->ControlMethodList.length();i++){
+
+        ((*GlobalObject::g_ConnectDevList)[i])->m_bMethodexecRunable=false;
+
+        ((*GlobalObject::g_ConnectDevList)[i])->ControlMethodList.clear();
+
+        ((*GlobalObject::g_ConnectDevList)[i])->m_bMethodexecRunable=true;
+    }
+
+    GlobalObject::locker->unlock();
+    setAllControlToDefault();
 }
 
 void SensorConfig_Dialog::on_DataType_comboBox_currentIndexChanged(int index)
@@ -629,5 +806,21 @@ void SensorConfig_Dialog::on_DataType_comboBox_currentIndexChanged(int index)
     }
     else{
         ui->Activated_1_checkBox_2->setEnabled(false);
+    }
+}
+
+void SensorConfig_Dialog::on_LoadMethod_pushButton_clicked()
+{
+    LoadCurrentControlMethod();
+}
+
+void SensorConfig_Dialog::on_ClearAllCorrection_pushButton_clicked()
+{
+    int index=ui->Mac_comboBox->currentIndex()-1;
+    if(index>0){
+
+        DL[index]->Corr_Coe.Reset();
+        SetValueFromDevice();
+
     }
 }

@@ -2,5 +2,7 @@
     <qresource prefix="/new/logo">
         <file>rsc/logo.jpg</file>
         <file>rsc/resize.bmp</file>
+        <file>rsc/connect.ico</file>
+        <file>rsc/disc.ico</file>
     </qresource>
 </RCC>

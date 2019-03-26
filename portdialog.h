@@ -5,7 +5,7 @@
 #include "mainwidget.h"
 #include <QTcpServer>
 #include <QTcpSocket>
-#include "globeobject.h"
+#include "globalobject.h"
 namespace Ui {
 class PortDialog;
 }
@@ -19,12 +19,8 @@ public:
     ~PortDialog();
 
 private slots:
-
-
     void on_Accept_pushButton_clicked();
-
     void on_Exit_pushButton_clicked();
-
 private:
     Ui::PortDialog *ui;
 

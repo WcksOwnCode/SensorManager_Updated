@@ -12,8 +12,8 @@ QT       += sql
 QT       += charts
 TARGET = SensorManager_Updated
 TEMPLATE = app
-
-
+#RC_ICONS =logo.ico
+RC_FILE = proj.rc
 # The following define makes your compiler emit warnings if you use
 # any feature of Qt which has been marked as deprecated (the exact warnings
 # depend on your compiler). Please consult the documentation of the
@@ -30,7 +30,6 @@ CONFIG += c++11
 SOURCES += \
         main.cpp \
         mainwidget.cpp \
-    globeobject.cpp \
     portdialog.cpp \
     treeviewmodel.cpp \
     serialportdialog.cpp \
@@ -38,11 +37,13 @@ SOURCES += \
     dataconfigdialog.cpp \
     renamedialog.cpp \
     environmentconfig.cpp \
-    sensorconfig_dialog.cpp
+    sensorconfig_dialog.cpp \
+    globalbject.cpp \
+    database_thread.cpp \
+    readquantity.cpp
 
 HEADERS += \
         mainwidget.h \
-    globeobject.h \
     portdialog.h \
     treeviewmodel.h \
     serialportdialog.h \
@@ -50,7 +51,10 @@ HEADERS += \
     dataconfigdialog.h \
     renamedialog.h \
     environmentconfig.h \
-    sensorconfig_dialog.h
+    sensorconfig_dialog.h \
+    globalobject.h \
+    database_thread.h \
+    readquantity.h
 
 FORMS += \
         mainwidget.ui \

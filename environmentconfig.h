@@ -2,7 +2,8 @@
 #define ENVIRONMENTCONFIG_H
 
 #include <QDialog>
-
+#include <QStandardItemModel>
+#include <QStandardItem>
 namespace Ui {
 class EnvironmentConfig;
 }
@@ -15,11 +16,19 @@ public:
     explicit EnvironmentConfig(QString &ConAddr,QString &CsvAddr,
                                QString &DBaddr,bool &label,
                                bool &multithread,bool &Con_ac,bool &Csv,
-                               bool &database,QWidget
+                               bool &database, QVector<QString>BlockList,QWidget
                                *parent = nullptr);
     ~EnvironmentConfig();
 
+    void RemoveBlockItem(QString Mac);
+    void UpdateTreeView();
+signals:
+    void Remove(QString mac);
+protected:
+    void closeEvent(QCloseEvent *event);
 private slots:
+    void BlockDeviceMenu(const QPoint& pos);
+
     void on_ChangeConfigAddrpushButton_clicked();
 
     void on_ChangeCsvAddrpushButton_clicked();
@@ -39,6 +48,12 @@ private slots:
 
     void on_ChangeIp_pushButton_clicked();
 
+    void on_Config_ChoosePath_pushButton_clicked();
+
+    void on_CSV_ChoosePath_pushButton_clicked();
+
+    void on_Database_ChoosePath_pushButton_clicked();
+
 signals:
     void envdone(QString ConAddr, QString CsvAddr,
                  QString DBaddr, bool label, bool multithread, bool Csv,
@@ -46,6 +61,8 @@ signals:
     void changeIp(QString newip);
 private:
     Ui::EnvironmentConfig *ui;
+    QStandardItemModel *BlockItem=nullptr;
+    QVector<QString> BlockItemList;
     QString configaddr;
     QString Csv_addr;
     QString DB_addr;
